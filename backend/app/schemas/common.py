@@ -193,3 +193,35 @@ class LoginIn(BaseModel):
 class TokenOut(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class BookmarkIn(BaseModel):
+    mcq_id: int | None = None
+    coding_id: int | None = None
+
+
+class BookmarkOut(BaseModel):
+    id: int
+    mcq_id: int | None
+    coding_id: int | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class StreakOut(BaseModel):
+    current_streak: int
+    longest_streak: int
+    total_quizzes: int
+    total_correct: int
+    last_activity_date: datetime | None
+
+    model_config = {"from_attributes": True}
+
+
+class LeaderboardEntry(BaseModel):
+    rank: int
+    full_name: str
+    current_streak: int
+    total_quizzes: int
+    total_correct: int

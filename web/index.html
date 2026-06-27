@@ -36,7 +36,11 @@
         <a href="#resources">Resources</a>
         <a href="#contact">Contribute</a>
       </nav>
-      <button id="refreshBtn" class="btn ghost">Refresh Data</button>
+        <div class="header-right">
+        <button id="refreshBtn" class="btn ghost">Refresh</button>
+        <button id="leaderboardBtn" class="btn ghost">🏆 Leaderboard</button>
+        <div id="authArea"></div>
+      </div>
     </header>
 
     <main>
@@ -78,6 +82,9 @@
         <div class="panel-head">
           <h2>Learning Tracks</h2>
           <p>Curated path from fundamentals to top interview rounds. Click any subject to study and take a quiz.</p>
+        </div>
+        <div class="search-bar">
+          <input id="searchInput" type="search" placeholder="🔍 Search subjects or topics..." autocomplete="off" />
         </div>
         <div class="phase-tabs" role="tablist" aria-label="Phase filters">
           <button class="phase-tab active" data-phase="all">All</button>
@@ -166,6 +173,38 @@
         <div id="modalBody" class="modal-body"></div>
       </div>
     </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay hidden">
+      <div class="modal modal-sm">
+        <div class="modal-head">
+          <h2 id="authTitle">Sign In</h2>
+          <button id="authClose" class="btn ghost">✕</button>
+        </div>
+        <div id="authBody" class="modal-body">
+          <input id="authName" type="text" placeholder="Full name" class="auth-input hidden" />
+          <input id="authEmail" type="email" placeholder="Email" class="auth-input" />
+          <input id="authPassword" type="password" placeholder="Password" class="auth-input" />
+          <button id="authSubmit" class="btn" style="width:100%;margin-top:10px">Sign In</button>
+          <p id="authToggle" class="auth-toggle">No account? <a href="#">Register</a></p>
+          <p id="authError" class="auth-error"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="lbModal" class="modal-overlay hidden">
+      <div class="modal modal-sm">
+        <div class="modal-head">
+          <h2>🏆 Leaderboard</h2>
+          <button id="lbClose" class="btn ghost">✕</button>
+        </div>
+        <div id="lbBody" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Streak Banner -->
+    <div id="streakBanner" class="streak-banner hidden"></div>
 
     <script src="app.js"></script>
   </body>

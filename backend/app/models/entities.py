@@ -91,6 +91,28 @@ class CodingQuestion(Base):
             return 0
 
 
+class Bookmark(Base):
+    __tablename__ = "bookmarks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    mcq_id: Mapped[int | None] = mapped_column(ForeignKey("mcq_questions.id"), nullable=True)
+    coding_id: Mapped[int | None] = mapped_column(ForeignKey("coding_questions.id"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class UserStreak(Base):
+    __tablename__ = "user_streaks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, index=True)
+    current_streak: Mapped[int] = mapped_column(Integer, default=0)
+    longest_streak: Mapped[int] = mapped_column(Integer, default=0)
+    last_activity_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    total_quizzes: Mapped[int] = mapped_column(Integer, default=0)
+    total_correct: Mapped[int] = mapped_column(Integer, default=0)
+
+
 class SubjectNote(Base):
     __tablename__ = "subject_notes"
 
