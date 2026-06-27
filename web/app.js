@@ -212,9 +212,13 @@ function renderStats() {
   const items = DATA.subjects;
   subjectCount.textContent = String(items.length);
   freeCount.textContent = String(items.filter(x => !x.is_premium).length);
-  premiumCount.textContent = String(items.filter(x => x.is_premium).length);
-  const premium = items.find(x => x.is_premium && x.monthly_price_inr);
-  planPrice.textContent = premium ? `INR ${premium.monthly_price_inr}` : "Free";
+  const qEl = document.getElementById("questionCount");
+  if (qEl) qEl.textContent = `${DATA.mcqs.length}+`;
+  if (premiumCount) premiumCount.textContent = String(items.filter(x => x.is_premium).length);
+  if (planPrice) {
+    const premium = items.find(x => x.is_premium && x.monthly_price_inr);
+    planPrice.textContent = premium ? `INR ${premium.monthly_price_inr}` : "Free";
+  }
 }
 
 function renderSubjects() {
@@ -389,6 +393,30 @@ function submitQuiz() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderAuthArea();
 loadDashboard();
+
+// ── Install app (PWA "Add to Home Screen") ────────────────────────────────────
+let deferredPrompt = null;
+const installBtn = document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) installBtn.classList.remove("hidden");
+});
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) {
+      alert("To install: open your browser menu and tap \"Add to Home screen\".");
+      return;
+    }
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.classList.add("hidden");
+  });
+}
+window.addEventListener("appinstalled", () => {
+  if (installBtn) installBtn.classList.add("hidden");
+});
 
 // Register service worker for offline + installability (PWA).
 if ("serviceWorker" in navigator) {
