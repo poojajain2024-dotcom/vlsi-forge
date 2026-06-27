@@ -20,7 +20,6 @@ const premiumCount  = document.getElementById("premiumCount");
 const planPrice     = document.getElementById("planPrice");
 const refreshBtn    = document.getElementById("refreshBtn");
 const premiumBtn    = document.getElementById("premiumBtn");
-const phaseTabs     = document.querySelectorAll(".phase-tab");
 const form          = document.getElementById("requestForm");
 const formMsg       = document.getElementById("formMsg");
 const searchInput   = document.getElementById("searchInput");
@@ -51,7 +50,6 @@ const lbBody  = document.getElementById("lbBody");
 const lbClose = document.getElementById("lbClose");
 const lbBtn   = document.getElementById("leaderboardBtn");
 
-let selectedPhase = "all";
 let searchQuery = "";
 let activeSubjectId = null;
 let activeTab = "learn";
@@ -222,7 +220,7 @@ function renderStats() {
 }
 
 function renderSubjects() {
-  let filtered = selectedPhase === "all" ? DATA.subjects : DATA.subjects.filter(s => String(s.phase) === selectedPhase);
+  let filtered = DATA.subjects.slice();
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(s =>
@@ -230,6 +228,8 @@ function renderSubjects() {
       (s.description || "").toLowerCase().includes(q) ||
       DATA.mcqs.some(m => m.subject_id === s.id && m.question_text.toLowerCase().includes(q)));
   }
+  // Free subjects first, premium packs at the end.
+  filtered.sort((a, b) => (a.is_premium ? 1 : 0) - (b.is_premium ? 1 : 0));
   if (!filtered.length) {
     subjectGrid.innerHTML = `<article class="subject-card"><h3>No subjects found</h3><p>${searchQuery ? "Try a different search." : "No content available."}</p></article>`;
     return;
@@ -243,7 +243,7 @@ function renderSubjects() {
     if (cCount) bits.push(`💻 ${cCount} code`);
     return `
     <article class="subject-card clickable" data-id="${s.id}" data-title="${escapeHtml(s.title)}" tabindex="0" role="button">
-      <div class="subject-meta">Phase ${s.phase}
+      <div class="subject-meta">
         <span class="tag ${s.is_premium ? "premium" : "free"}">${s.is_premium ? `Premium INR ${s.monthly_price_inr}/mo` : "Free"}</span>
       </div>
       <h3>${escapeHtml(s.title)}</h3>
@@ -258,18 +258,20 @@ function escapeHtml(v) {
   return String(v == null ? "" : v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
-// ── Phase tabs & search ───────────────────────────────────────────────────────
-phaseTabs.forEach(tab => tab.addEventListener("click", () => {
-  phaseTabs.forEach(t => t.classList.remove("active"));
-  tab.classList.add("active");
-  selectedPhase = tab.dataset.phase || "all";
-  renderSubjects();
-}));
-
+// ── Search ────────────────────────────────────────────────────────────────────
 searchInput.addEventListener("input", () => {
   searchQuery = searchInput.value.trim();
   renderSubjects();
 });
+
+// Clicking the hero stat cards jumps into the subjects.
+const kpiGrid = document.getElementById("kpiGrid");
+if (kpiGrid) {
+  kpiGrid.style.cursor = "pointer";
+  kpiGrid.addEventListener("click", () => {
+    document.getElementById("tracks").scrollIntoView({ behavior: "smooth" });
+  });
+}
 
 refreshBtn.addEventListener("click", loadDashboard);
 premiumBtn.addEventListener("click", () => alert("Hook this button to your payment gateway checkout flow (Razorpay/Stripe)."));

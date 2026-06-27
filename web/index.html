@@ -61,7 +61,7 @@
           <a class="btn" href="#tracks">Start Learning Free</a>
           <button id="installBtn" class="btn alt hidden">📲 Install App</button>
         </div>
-        <div class="kpi-grid">
+        <div class="kpi-grid" id="kpiGrid">
           <article>
             <h3 id="subjectCount">-</h3>
             <p>Subjects</p>
@@ -83,17 +83,11 @@
 
       <section id="tracks" class="panel">
         <div class="panel-head">
-          <h2>Learning Tracks</h2>
-          <p>Curated path from fundamentals to top interview rounds. Click any subject to study and take a quiz.</p>
+          <h2>Subjects</h2>
+          <p>Pick any subject to read lessons, revise notes, take a quiz, and practice coding. Free subjects first, premium packs at the end.</p>
         </div>
         <div class="search-bar">
           <input id="searchInput" type="search" placeholder="🔍 Search subjects or topics..." autocomplete="off" />
-        </div>
-        <div class="phase-tabs" role="tablist" aria-label="Phase filters">
-          <button class="phase-tab active" data-phase="all">All</button>
-          <button class="phase-tab" data-phase="1">Phase 1</button>
-          <button class="phase-tab" data-phase="2">Phase 2</button>
-          <button class="phase-tab" data-phase="3">Phase 3</button>
         </div>
         <div id="subjectGrid" class="subject-grid"></div>
       </section>
@@ -105,7 +99,7 @@
             <li>MCQ practice with explanations and difficulty tagging</li>
             <li>Verilog/SystemVerilog/UVM coding tasks</li>
             <li>Topic notes for fast revision before exams</li>
-            <li>Interview-focused hard sets in premium phase</li>
+            <li>Interview-focused hard sets in premium packs</li>
           </ul>
         </article>
         <article class="card">
@@ -123,7 +117,7 @@
         <article class="price-card free">
           <h3>Free Plan</h3>
           <p class="price">INR 0</p>
-          <p>Phase 1 + Phase 2 content for students preparing exams and core interviews.</p>
+          <p>All core subjects, lessons, notes, quizzes and starter coding — free forever.</p>
           <ul>
             <li>MCQs + notes</li>
             <li>Starter coding questions</li>
@@ -132,7 +126,7 @@
         </article>
         <article class="price-card premium">
           <p class="badge">Most Valuable</p>
-          <h3>Phase 3 Premium</h3>
+          <h3>Premium Packs</h3>
           <p class="price">INR 299<span>/month</span></p>
           <p>Advanced interview sets and high-difficulty coding rounds.</p>
           <ul>
