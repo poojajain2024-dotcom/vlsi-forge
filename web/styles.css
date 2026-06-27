@@ -460,6 +460,32 @@ footer {
   line-height: 1.5;
 }
 
+.lesson-body.code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  background: rgba(0, 0, 0, .04);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.code-problem {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.code-problem h4 {
+  margin: 0 0 6px;
+  color: var(--brand);
+}
+
+.code-prompt {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
 .quiz-q {
   border: 1px solid var(--line);
   border-radius: 12px;

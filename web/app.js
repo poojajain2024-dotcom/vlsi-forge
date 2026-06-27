@@ -237,6 +237,10 @@ function renderSubjects() {
   subjectGrid.innerHTML = filtered.map(s => {
     const qCount = DATA.mcqs.filter(m => m.subject_id === s.id).length;
     const tCount = DATA.tutorials.filter(t => t.subject_id === s.id).length;
+    const nCount = (DATA.notes || []).filter(n => n.subject_id === s.id).length;
+    const cCount = (DATA.coding || []).filter(c => c.subject_id === s.id).length;
+    const bits = [`📘 ${tCount + nCount} lessons`, `📝 ${qCount} questions`];
+    if (cCount) bits.push(`💻 ${cCount} code`);
     return `
     <article class="subject-card clickable" data-id="${s.id}" data-title="${escapeHtml(s.title)}" tabindex="0" role="button">
       <div class="subject-meta">Phase ${s.phase}
@@ -244,7 +248,7 @@ function renderSubjects() {
       </div>
       <h3>${escapeHtml(s.title)}</h3>
       <p>${escapeHtml(s.description)}</p>
-      <div class="subject-meta"><span class="muted">📘 ${tCount} lessons • 📝 ${qCount} questions</span></div>
+      <div class="subject-meta"><span class="muted">${bits.join(" • ")}</span></div>
       <span class="card-cta">Open &amp; study →</span>
     </article>`;
   }).join("");
@@ -299,7 +303,10 @@ modalTabs.forEach(tab => tab.addEventListener("click", () => {
   modalTabs.forEach(t => t.classList.remove("active"));
   tab.classList.add("active");
   activeTab = tab.dataset.tab;
-  if (activeTab === "learn") renderLearn(); else renderQuiz();
+  if (activeTab === "learn") renderLearn();
+  else if (activeTab === "notes") renderNotes();
+  else if (activeTab === "code") renderCode();
+  else renderQuiz();
 }));
 
 function openSubject(id, title) {
@@ -316,13 +323,43 @@ function renderLearn() {
     .filter(t => t.subject_id === activeSubjectId)
     .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
   if (!tutorials.length) {
-    modalBody.innerHTML = "<p class='muted'>No tutorials for this subject yet. Try the Quiz tab.</p>"; return;
+    modalBody.innerHTML = "<p class='muted'>No tutorials for this subject yet. Try the Notes or Quiz tab.</p>"; return;
   }
   modalBody.innerHTML = tutorials.map(t => `
     <details class="lesson">
       <summary><strong>${escapeHtml(t.title)}</strong><span class="muted"> • ${escapeHtml(t.topic)} • ${t.reading_minutes} min</span></summary>
       <pre class="lesson-body">${escapeHtml(t.content_markdown)}</pre>
     </details>`).join("");
+}
+
+function renderNotes() {
+  const notes = (DATA.notes || []).filter(n => n.subject_id === activeSubjectId);
+  if (!notes.length) {
+    modalBody.innerHTML = "<p class='muted'>No quick notes for this subject yet. Try the Learn or Quiz tab.</p>"; return;
+  }
+  modalBody.innerHTML = `<p class="muted" style="margin:0 0 .6rem">Quick revision notes — perfect right before an exam or interview.</p>` +
+    notes.map(n => `
+    <details class="lesson" open>
+      <summary><strong>${escapeHtml(n.title)}</strong><span class="muted"> • ${escapeHtml(n.topic)}</span></summary>
+      <pre class="lesson-body">${escapeHtml(n.content_markdown)}</pre>
+    </details>`).join("");
+}
+
+function renderCode() {
+  const probs = (DATA.coding || []).filter(c => c.subject_id === activeSubjectId);
+  if (!probs.length) {
+    modalBody.innerHTML = "<p class='muted'>No coding problems for this subject yet. Try the Learn or Quiz tab.</p>"; return;
+  }
+  modalBody.innerHTML = `<p class="muted" style="margin:0 0 .6rem">Hands-on coding problems. Try it yourself, then reveal the solution.</p>` +
+    probs.map(c => `
+    <div class="code-problem">
+      <h4>${escapeHtml(c.title)}</h4>
+      <p class="code-prompt">${escapeHtml(c.prompt)}</p>
+      ${c.constraints ? `<p class="muted"><strong>Constraints:</strong> ${escapeHtml(c.constraints)}</p>` : ""}
+      ${c.expected_output ? `<p class="muted"><strong>Expected:</strong> ${escapeHtml(c.expected_output)}</p>` : ""}
+      ${c.starter_code ? `<details class="lesson"><summary><strong>Starter code</strong></summary><pre class="lesson-body code">${escapeHtml(c.starter_code)}</pre></details>` : ""}
+      <details class="lesson"><summary><strong>✅ Show solution</strong></summary><pre class="lesson-body code">${escapeHtml(c.solution_code)}</pre></details>
+    </div>`).join("");
 }
 
 function shuffle(arr) {
