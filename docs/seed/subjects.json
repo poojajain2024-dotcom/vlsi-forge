@@ -1,0 +1,98 @@
+[
+  {
+    "slug": "digital-electronics",
+    "title": "Digital Electronics",
+    "description": "Gates, combinational logic, sequential logic, counters, and FSM basics.",
+    "phase": 1,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "verilog-hdl",
+    "title": "Verilog HDL",
+    "description": "Synthesizable Verilog, procedural blocks, and testbench basics.",
+    "phase": 1,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "sta-basics",
+    "title": "STA Basics",
+    "description": "Timing paths, setup/hold, constraints, and slack analysis.",
+    "phase": 1,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "systemverilog-rtl",
+    "title": "SystemVerilog RTL",
+    "description": "Always_comb/ff/latch, packed types, and RTL coding style.",
+    "phase": 2,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "systemverilog-verification",
+    "title": "SystemVerilog Verification",
+    "description": "OOP, interfaces, mailboxes, constrained random, and checkers.",
+    "phase": 2,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "uvm",
+    "title": "UVM",
+    "description": "UVM architecture, sequences, drivers, monitors, scoreboards.",
+    "phase": 2,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "sva",
+    "title": "SVA Assertions",
+    "description": "Concurrent assertions, implication operators, and formal intent.",
+    "phase": 2,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "physical-design",
+    "title": "Physical Design",
+    "description": "Floorplan, placement, CTS, routing, congestion, and ECO flow.",
+    "phase": 2,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "bus-protocols",
+    "title": "Bus Protocols (AXI/APB/AHB)",
+    "description": "Handshake behavior and throughput/latency tradeoffs.",
+    "phase": 2,
+    "is_premium": false,
+    "monthly_price_inr": 0
+  },
+  {
+    "slug": "interview-core-vlsi",
+    "title": "Interview Core VLSI Pack",
+    "description": "Interview-oriented mixed rounds across RTL, STA, and verification.",
+    "phase": 3,
+    "is_premium": true,
+    "monthly_price_inr": 299
+  },
+  {
+    "slug": "interview-company-qualcomm",
+    "title": "Company Pack: Qualcomm",
+    "description": "Patterned questions and coding rounds inspired by Qualcomm style.",
+    "phase": 3,
+    "is_premium": true,
+    "monthly_price_inr": 299
+  },
+  {
+    "slug": "interview-company-nvidia-amd",
+    "title": "Company Pack: NVIDIA + AMD",
+    "description": "High-difficulty architecture and verification interview drills.",
+    "phase": 3,
+    "is_premium": true,
+    "monthly_price_inr": 299
+  }
+]

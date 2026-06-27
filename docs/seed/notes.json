@@ -1,0 +1,137 @@
+[
+  {
+    "subject_slug": "digital-electronics",
+    "topic": "Combinational Logic",
+    "title": "K-Map Reduction Workflow",
+    "content_markdown": "1. Mark minterms/maxterms.\n2. Form largest power-of-two groups.\n3. Prefer overlap only when it reduces literals.\n4. Validate with truth table spot checks."
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "topic": "Sequential Logic",
+    "title": "FSM Design Checklist",
+    "content_markdown": "Define states, transitions, reset behavior, and output coding style (Moore/Mealy). Verify unreachable states and default branches."
+  },
+
+  {
+    "subject_slug": "verilog-hdl",
+    "topic": "Synthesizable RTL",
+    "title": "Combinational vs Sequential Blocks",
+    "content_markdown": "Use `always @(*)` or `always_comb` for combinational logic and `always @(posedge clk ...)` / `always_ff` for sequential logic."
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "topic": "Coding Hygiene",
+    "title": "Latch Avoidance",
+    "content_markdown": "Initialize outputs and cover all branches in combinational blocks to avoid unintended latch inference."
+  },
+
+  {
+    "subject_slug": "sta-basics",
+    "topic": "Timing Paths",
+    "title": "Setup/Hold Intuition",
+    "content_markdown": "Setup is max-delay check; hold is min-delay check. Fix setup with faster data path or slower capture clock, fix hold with delay insertion."
+  },
+  {
+    "subject_slug": "sta-basics",
+    "topic": "Constraints",
+    "title": "Essential SDC Commands",
+    "content_markdown": "Start with `create_clock`, input/output delays, false/multicycle paths, and clock uncertainty before deep optimization."
+  },
+
+  {
+    "subject_slug": "systemverilog-rtl",
+    "topic": "Language Constructs",
+    "title": "always_ff/always_comb Best Practices",
+    "content_markdown": "These constructs add tool checks for intent and reduce class of simulation-synthesis mismatches."
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "topic": "Data Types",
+    "title": "Packed vs Unpacked",
+    "content_markdown": "Packed is bit-level contiguous representation; unpacked is array-of-elements representation."
+  },
+
+  {
+    "subject_slug": "systemverilog-verification",
+    "topic": "TB Architecture",
+    "title": "Generator-Driver-Monitor-Scoreboard",
+    "content_markdown": "This decomposition gives separation of concerns and easier debug when coverage or checks fail."
+  },
+  {
+    "subject_slug": "systemverilog-verification",
+    "topic": "Randomization",
+    "title": "Constraint Debugging",
+    "content_markdown": "When randomization fails, reduce constraint set, inspect conflicting ranges, and incrementally restore intent."
+  },
+
+  {
+    "subject_slug": "uvm",
+    "topic": "UVM Components",
+    "title": "Agent Anatomy",
+    "content_markdown": "An active agent includes sequencer, driver, and monitor. Passive agent typically contains only monitor."
+  },
+  {
+    "subject_slug": "uvm",
+    "topic": "Phasing",
+    "title": "Run Phase Objections",
+    "content_markdown": "Raise objection before traffic starts and drop when done to control test end cleanly."
+  },
+
+  {
+    "subject_slug": "sva",
+    "topic": "Assertion Basics",
+    "title": "Implication Operators",
+    "content_markdown": "Use `|->` for overlapped and `|=>` for non-overlapped implication depending on cycle alignment intent."
+  },
+  {
+    "subject_slug": "sva",
+    "topic": "Protocol Checking",
+    "title": "Handshake Assertions",
+    "content_markdown": "Convert spec timing to temporal properties with clear reset disable and bounded delays where possible."
+  },
+
+  {
+    "subject_slug": "physical-design",
+    "topic": "Flow Stages",
+    "title": "From Floorplan to Route",
+    "content_markdown": "Typical order: floorplan -> power plan -> placement -> CTS -> route -> signoff checks and ECO."
+  },
+  {
+    "subject_slug": "physical-design",
+    "topic": "Congestion",
+    "title": "Early Congestion Prevention",
+    "content_markdown": "Use macro spacing, blockages, balanced utilization targets, and buffering strategy to avoid late-stage congestion crises."
+  },
+
+  {
+    "subject_slug": "bus-protocols",
+    "topic": "AXI",
+    "title": "Independent Channels",
+    "content_markdown": "AW, W, B, AR, R channels are independently handshaked, enabling pipelining and higher throughput."
+  },
+  {
+    "subject_slug": "bus-protocols",
+    "topic": "APB/AHB",
+    "title": "When to Use APB vs AHB",
+    "content_markdown": "APB for simple low-bandwidth peripherals; AHB for higher-performance memory-mapped backbone segments."
+  },
+
+  {
+    "subject_slug": "interview-core-vlsi",
+    "topic": "Interview Strategy",
+    "title": "How to Answer Design Debug Questions",
+    "content_markdown": "Structure answers as: symptom -> hypothesis -> experiment -> observation -> fix -> prevention."
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "topic": "Company Practice",
+    "title": "Performance and Power Tradeoff Cases",
+    "content_markdown": "Prepare examples on clock gating, DVFS assumptions, and protocol bottleneck debugging with measurable metrics."
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "topic": "Company Practice",
+    "title": "High-Throughput Pipeline Discussion",
+    "content_markdown": "Expect questions on hazard control, occupancy, buffering, and latency-hiding patterns in compute-heavy pipelines."
+  }
+]

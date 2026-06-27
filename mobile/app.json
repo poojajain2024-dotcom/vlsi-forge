@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "VLSI Forge",
+    "slug": "vlsi-forge",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["android"],
+    "primaryColor": "#006d77",
+    "android": {
+      "package": "com.vlsiforge.app",
+      "versionCode": 1
+    }
+  }
+}

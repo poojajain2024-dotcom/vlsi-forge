@@ -1,0 +1,331 @@
+[
+  {
+    "subject_slug": "verilog-hdl",
+    "question_text": "Which assignment type should be preferred in combinational always blocks?",
+    "option_a": "Blocking (=)",
+    "option_b": "Non-blocking (<=)",
+    "option_c": "Continuous assign only",
+    "option_d": "Force/release",
+    "correct_option": "A",
+    "explanation": "Blocking assignments are standard in combinational procedural logic.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "question_text": "What happens if a combinational always block misses a sensitivity signal in Verilog-2001?",
+    "option_a": "Compilation fails",
+    "option_b": "Simulation may mismatch synthesized logic",
+    "option_c": "Synthesis ignores the block",
+    "option_d": "Clock gets inferred",
+    "correct_option": "B",
+    "explanation": "Incomplete sensitivity can cause stale simulation outputs while synthesis infers full logic.",
+    "difficulty": "medium"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "question_text": "Which construct is synthesizable for simple mux logic?",
+    "option_a": "initial begin ... end",
+    "option_b": "forever begin ... end",
+    "option_c": "assign y = sel ? b : a;",
+    "option_d": "$display",
+    "correct_option": "C",
+    "explanation": "Continuous assignment is synthesizable for combinational mux logic.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "question_text": "When using non-blocking assignments in sequential logic, updates occur:",
+    "option_a": "Immediately in source order",
+    "option_b": "At the end of current simulation time step",
+    "option_c": "Only on reset",
+    "option_d": "Only in synthesis",
+    "correct_option": "B",
+    "explanation": "Non-blocking assignments schedule updates for the NBA region.",
+    "difficulty": "medium"
+  },
+
+  {
+    "subject_slug": "sta-basics",
+    "question_text": "Setup slack is computed as:",
+    "option_a": "Data arrival - Data required",
+    "option_b": "Data required - Data arrival",
+    "option_c": "Launch clk - Capture clk",
+    "option_d": "Hold margin - uncertainty",
+    "correct_option": "B",
+    "explanation": "Positive setup slack means required time exceeds arrival time.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "sta-basics",
+    "question_text": "Hold checks are associated with which capture edge relative to launch?",
+    "option_a": "Previous edge",
+    "option_b": "Same active edge (minimum delay path)",
+    "option_c": "Two cycles later",
+    "option_d": "No edge relationship",
+    "correct_option": "B",
+    "explanation": "Hold verifies data is stable just after launch for same-edge capture relation.",
+    "difficulty": "medium"
+  },
+  {
+    "subject_slug": "sta-basics",
+    "question_text": "Clock uncertainty usually affects timing by:",
+    "option_a": "Relaxing both setup and hold",
+    "option_b": "Tightening setup and hold margins",
+    "option_c": "Changing netlist functionality",
+    "option_d": "Removing false paths",
+    "correct_option": "B",
+    "explanation": "Uncertainty subtracts from available margins for robust closure.",
+    "difficulty": "medium"
+  },
+  {
+    "subject_slug": "sta-basics",
+    "question_text": "A path declared as false path in SDC means:",
+    "option_a": "It is physically disconnected",
+    "option_b": "It is skipped for timing closure checks",
+    "option_c": "It gets extra optimization priority",
+    "option_d": "It is removed from synthesis",
+    "correct_option": "B",
+    "explanation": "False path constraints tell STA engine not to analyze that path for timing violations.",
+    "difficulty": "easy"
+  },
+
+  {
+    "subject_slug": "systemverilog-rtl",
+    "question_text": "always_ff is intended for:",
+    "option_a": "Combinational logic only",
+    "option_b": "Level-sensitive latch only",
+    "option_c": "Edge-triggered sequential logic",
+    "option_d": "Assertions",
+    "correct_option": "C",
+    "explanation": "always_ff enforces sequential coding semantics around clocked blocks.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "question_text": "A packed struct in SystemVerilog is useful because:",
+    "option_a": "It cannot be sliced",
+    "option_b": "It maps to contiguous bits and supports bit operations",
+    "option_c": "It is only for classes",
+    "option_d": "It disables synthesis",
+    "correct_option": "B",
+    "explanation": "Packed types are bit-contiguous and synthesizable for RTL datapaths.",
+    "difficulty": "medium"
+  },
+
+  {
+    "subject_slug": "systemverilog-verification",
+    "question_text": "A mailbox is primarily used for:",
+    "option_a": "Clock gating",
+    "option_b": "Inter-process communication between testbench components",
+    "option_c": "Synthesis constraints",
+    "option_d": "Coverage closure",
+    "correct_option": "B",
+    "explanation": "Mailboxes pass transactions between generator/driver/scoreboard threads.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "systemverilog-verification",
+    "question_text": "Constrained-random generation improves verification by:",
+    "option_a": "Eliminating all directed tests",
+    "option_b": "Exploring legal input space with variability",
+    "option_c": "Reducing simulation runtime to zero",
+    "option_d": "Making coverage unnecessary",
+    "correct_option": "B",
+    "explanation": "Randomized scenarios reveal corner cases while constraints keep them valid.",
+    "difficulty": "medium"
+  },
+
+  {
+    "subject_slug": "uvm",
+    "question_text": "Which UVM component drives pin-level signals from sequence items?",
+    "option_a": "Monitor",
+    "option_b": "Driver",
+    "option_c": "Scoreboard",
+    "option_d": "Subscriber",
+    "correct_option": "B",
+    "explanation": "UVM driver converts transactions into interface activity.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "uvm",
+    "question_text": "The primary role of a scoreboard is to:",
+    "option_a": "Generate clocks",
+    "option_b": "Compare expected and actual behavior",
+    "option_c": "Compile tests",
+    "option_d": "Synthesize DUT",
+    "correct_option": "B",
+    "explanation": "Scoreboards implement functional checking and mismatch reporting.",
+    "difficulty": "easy"
+  },
+
+  {
+    "subject_slug": "sva",
+    "question_text": "The operator |-> in SVA denotes:",
+    "option_a": "Overlapped implication",
+    "option_b": "Non-overlapped implication",
+    "option_c": "Logical OR",
+    "option_d": "Bitwise shift",
+    "correct_option": "A",
+    "explanation": "Overlapped implication starts consequent evaluation in same cycle.",
+    "difficulty": "medium"
+  },
+  {
+    "subject_slug": "sva",
+    "question_text": "assert property is typically used to:",
+    "option_a": "Collect functional coverage only",
+    "option_b": "Specify and check protocol/temporal behavior",
+    "option_c": "Declare modules",
+    "option_d": "Infer memory macros",
+    "correct_option": "B",
+    "explanation": "Assertions capture intended temporal rules and flag violations.",
+    "difficulty": "easy"
+  },
+
+  {
+    "subject_slug": "physical-design",
+    "question_text": "CTS stands for:",
+    "option_a": "Clock Timing Synthesis",
+    "option_b": "Clock Tree Synthesis",
+    "option_c": "Chip Tree Structure",
+    "option_d": "Capture Timing Setup",
+    "correct_option": "B",
+    "explanation": "CTS builds balanced clock distribution network across sinks.",
+    "difficulty": "easy"
+  },
+  {
+    "subject_slug": "physical-design",
+    "question_text": "Main purpose of placement legalization is to:",
+    "option_a": "Randomize cell locations",
+    "option_b": "Align cells to legal rows/sites while preserving optimization intent",
+    "option_c": "Bypass routing",
+    "option_d": "Skip DRC",
+    "correct_option": "B",
+    "explanation": "Legalization ensures placement is physically valid for downstream stages.",
+    "difficulty": "medium"
+  },
+
+  {
+    "subject_slug": "bus-protocols",
+    "question_text": "AXI allows which key performance feature compared to APB?",
+    "option_a": "No handshake",
+    "option_b": "Pipelined and outstanding transactions",
+    "option_c": "Single clock cycle only",
+    "option_d": "No burst support",
+    "correct_option": "B",
+    "explanation": "AXI supports high throughput via independent channels and outstanding transfers.",
+    "difficulty": "medium"
+  },
+  {
+    "subject_slug": "bus-protocols",
+    "question_text": "APB is commonly used for:",
+    "option_a": "High-bandwidth cache coherent traffic",
+    "option_b": "Simple low-bandwidth peripheral access",
+    "option_c": "GPU memory interfaces",
+    "option_d": "DDR PHY calibration",
+    "correct_option": "B",
+    "explanation": "APB targets low-complexity peripherals with simple protocol timing.",
+    "difficulty": "easy"
+  },
+
+  {
+    "subject_slug": "interview-core-vlsi",
+    "question_text": "In interview timing questions, useful-skew is best described as:",
+    "option_a": "Uncontrolled random skew",
+    "option_b": "Intentional clock latency tuning to improve slack",
+    "option_c": "Jitter increase method",
+    "option_d": "Hold violation injection",
+    "correct_option": "B",
+    "explanation": "Useful skew intentionally shifts clock arrival to improve setup/hold balance.",
+    "difficulty": "hard"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "question_text": "When debugging X-propagation in RTL simulation, first practical step is:",
+    "option_a": "Increase synthesis effort",
+    "option_b": "Trace reset sequencing and uninitialized flops",
+    "option_c": "Disable assertions",
+    "option_d": "Remove clocks",
+    "correct_option": "B",
+    "explanation": "Most X issues are caused by reset or initialization gaps.",
+    "difficulty": "hard"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "question_text": "A robust CDC interview answer should include:",
+    "option_a": "Single flop synchronizer for all buses",
+    "option_b": "No need for constraints",
+    "option_c": "2-flop sync for control and protocol for multi-bit data",
+    "option_d": "Asynchronous clocks are equivalent",
+    "correct_option": "C",
+    "explanation": "Control and data require different CDC strategies to avoid corruption.",
+    "difficulty": "hard"
+  },
+
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "question_text": "In throughput-focused SoC interview rounds, AXI bottleneck analysis should start with:",
+    "option_a": "Color theme of waveform viewer",
+    "option_b": "Channel utilization and back-pressure points",
+    "option_c": "Disabling bursts",
+    "option_d": "Removing QoS",
+    "correct_option": "B",
+    "explanation": "Utilization and stall hotspots reveal system throughput constraints.",
+    "difficulty": "hard"
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "question_text": "For low-power interview scenarios, retention flop planning primarily addresses:",
+    "option_a": "Clock uncertainty",
+    "option_b": "State preservation across power gating",
+    "option_c": "Pin assignment",
+    "option_d": "IR drop signoff only",
+    "correct_option": "B",
+    "explanation": "Retention keeps critical state while domain power is off.",
+    "difficulty": "hard"
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "question_text": "A practical verification interview answer for constrained random closure includes:",
+    "option_a": "Only 100% line coverage",
+    "option_b": "Functional coverage goals plus targeted test refinement",
+    "option_c": "No scoreboard required",
+    "option_d": "No seed control",
+    "correct_option": "B",
+    "explanation": "Coverage-driven refinement with checkers is key to closure quality.",
+    "difficulty": "hard"
+  },
+
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "question_text": "For GPU-style pipelines, common interview focus is:",
+    "option_a": "Single-cycle global memory latency",
+    "option_b": "Deep pipelining and hazard management",
+    "option_c": "No clock domains",
+    "option_d": "No verification needed",
+    "correct_option": "B",
+    "explanation": "High-performance pipelines rely on deep staging and robust hazard controls.",
+    "difficulty": "hard"
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "question_text": "In physical closure interviews, ECO loops are typically driven by:",
+    "option_a": "Restaurant menu",
+    "option_b": "Timing, congestion, and DRC tradeoffs",
+    "option_c": "Random net deletions",
+    "option_d": "Ignoring setup paths",
+    "correct_option": "B",
+    "explanation": "Closure needs iterative balancing of timing and manufacturability.",
+    "difficulty": "hard"
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "question_text": "A strong architecture interview response on cache hierarchy should include:",
+    "option_a": "Only L1 size",
+    "option_b": "Latency, bandwidth, hit rate, and coherence implications",
+    "option_c": "No replacement policy",
+    "option_d": "No workload assumptions",
+    "correct_option": "B",
+    "explanation": "Hierarchy decisions are multi-dimensional and workload dependent.",
+    "difficulty": "hard"
+  }
+]

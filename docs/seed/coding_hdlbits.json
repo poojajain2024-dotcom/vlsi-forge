@@ -1,0 +1,158 @@
+[
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Wire (Pass-Through)",
+    "prompt": "Create a module with one input and one output that behaves like a wire.",
+    "constraints": "Use a continuous assignment.",
+    "expected_output": "out always equals in.",
+    "starter_code": "module top_module(input in, output out);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input in, output out);\n  assign out = in;\nendmodule",
+    "difficulty": "easy",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Constant Outputs",
+    "prompt": "Drive output zero to constant 0 and output one to constant 1.",
+    "constraints": "Use continuous assignments.",
+    "expected_output": "zero=0 and one=1 at all times.",
+    "starter_code": "module top_module(output zero, output one);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(output zero, output one);\n  assign zero = 1'b0;\n  assign one = 1'b1;\nendmodule",
+    "difficulty": "easy",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "NOT Gate",
+    "prompt": "Implement an inverter.",
+    "constraints": "Single continuous assignment.",
+    "expected_output": "out = NOT in.",
+    "starter_code": "module top_module(input in, output out);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input in, output out);\n  assign out = ~in;\nendmodule",
+    "difficulty": "easy",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "2:1 Mux",
+    "prompt": "Build a 2:1 multiplexer selecting a or b based on sel.",
+    "constraints": "Use the conditional operator.",
+    "expected_output": "y = a when sel=0 else b.",
+    "starter_code": "module top_module(input a, input b, input sel, output y);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input a, input b, input sel, output y);\n  assign y = sel ? b : a;\nendmodule",
+    "difficulty": "easy",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "4-bit AND",
+    "prompt": "Bitwise AND two 4-bit inputs.",
+    "constraints": "Vectors of width 4.",
+    "expected_output": "y[i] = a[i] & b[i].",
+    "starter_code": "module top_module(input [3:0] a, input [3:0] b, output [3:0] y);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input [3:0] a, input [3:0] b, output [3:0] y);\n  assign y = a & b;\nendmodule",
+    "difficulty": "easy",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Half Adder",
+    "prompt": "Create a half adder producing sum and carry.",
+    "constraints": "Use XOR and AND.",
+    "expected_output": "sum = a^b, cout = a&b.",
+    "starter_code": "module top_module(input a, input b, output sum, output cout);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input a, input b, output sum, output cout);\n  assign sum = a ^ b;\n  assign cout = a & b;\nendmodule",
+    "difficulty": "easy",
+    "is_premium": false
+  },
+
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Full Adder",
+    "prompt": "Create a full adder with carry-in.",
+    "constraints": "Use bitwise operators only.",
+    "expected_output": "sum = a^b^cin, cout = majority(a,b,cin).",
+    "starter_code": "module top_module(input a, input b, input cin, output sum, output cout);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input a, input b, input cin, output sum, output cout);\n  assign sum = a ^ b ^ cin;\n  assign cout = (a & b) | (b & cin) | (a & cin);\nendmodule",
+    "difficulty": "medium",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "4-bit Ripple Adder",
+    "prompt": "Add two 4-bit numbers with carry out.",
+    "constraints": "You may use the + operator.",
+    "expected_output": "{cout,sum} = a + b + cin.",
+    "starter_code": "module top_module(input [3:0] a, input [3:0] b, input cin, output [3:0] sum, output cout);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input [3:0] a, input [3:0] b, input cin, output [3:0] sum, output cout);\n  assign {cout, sum} = a + b + cin;\nendmodule",
+    "difficulty": "medium",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "D Flip-Flop With Async Reset",
+    "prompt": "Positive-edge DFF with active-low async reset.",
+    "constraints": "Non-blocking assignment in sequential block.",
+    "expected_output": "q<=0 on reset else q<=d at posedge clk.",
+    "starter_code": "module top_module(input clk, input rst_n, input d, output reg q);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input clk, input rst_n, input d, output reg q);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) q <= 1'b0; else q <= d;\nendmodule",
+    "difficulty": "medium",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Mod-10 Counter",
+    "prompt": "Design a synchronous decade counter (0-9) with sync reset.",
+    "constraints": "Wrap from 9 back to 0.",
+    "expected_output": "count cycles 0..9 then repeats.",
+    "starter_code": "module top_module(input clk, input reset, output reg [3:0] count);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input clk, input reset, output reg [3:0] count);\n  always @(posedge clk)\n    if (reset || count==4'd9) count <= 4'd0; else count <= count + 4'd1;\nendmodule",
+    "difficulty": "medium",
+    "is_premium": false
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "4-to-1 Mux (Vectorized)",
+    "prompt": "Select one of four 8-bit inputs using a 2-bit select.",
+    "constraints": "Use a case statement.",
+    "expected_output": "out equals chosen input.",
+    "starter_code": "module top_module(input [1:0] sel, input [7:0] a, input [7:0] b, input [7:0] c, input [7:0] d, output reg [7:0] out);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input [1:0] sel, input [7:0] a, input [7:0] b, input [7:0] c, input [7:0] d, output reg [7:0] out);\n  always @(*) case(sel) 2'd0:out=a; 2'd1:out=b; 2'd2:out=c; default:out=d; endcase\nendmodule",
+    "difficulty": "medium",
+    "is_premium": false
+  },
+
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Sequence Detector 1011 (Overlapping)",
+    "prompt": "Detect the overlapping pattern 1011 on serial input using a Moore FSM.",
+    "constraints": "Assert detected for one cycle when pattern completes.",
+    "expected_output": "detected pulses when 1011 seen, overlap allowed.",
+    "starter_code": "module top_module(input clk, input rst_n, input din, output detected);\n  // TODO\nendmodule",
+    "solution_code": "module top_module(input clk, input rst_n, input din, output detected);\n  localparam S0=0,S1=1,S10=2,S101=3,S1011=4;\n  reg [2:0] st;\n  always @(posedge clk or negedge rst_n) begin\n    if(!rst_n) st<=S0; else case(st)\n      S0: st <= din?S1:S0;\n      S1: st <= din?S1:S10;\n      S10: st <= din?S101:S0;\n      S101: st <= din?S1011:S10;\n      S1011: st <= din?S1:S10;\n      default: st<=S0;\n    endcase\n  end\n  assign detected = (st==S1011);\nendmodule",
+    "difficulty": "hard",
+    "is_premium": true
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Parameterized Barrel Shifter",
+    "prompt": "Implement a combinational left rotate by a variable amount for WIDTH-bit data.",
+    "constraints": "Rotate (not shift); WIDTH is a power of two.",
+    "expected_output": "out = data rotated left by amt.",
+    "starter_code": "module top_module #(parameter WIDTH=8)(input [WIDTH-1:0] data, input [$clog2(WIDTH)-1:0] amt, output [WIDTH-1:0] out);\n  // TODO\nendmodule",
+    "solution_code": "module top_module #(parameter WIDTH=8)(input [WIDTH-1:0] data, input [$clog2(WIDTH)-1:0] amt, output [WIDTH-1:0] out);\n  assign out = (data << amt) | (data >> (WIDTH-amt));\nendmodule",
+    "difficulty": "hard",
+    "is_premium": true
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Synchronous FIFO Pointer Logic",
+    "prompt": "Implement full/empty generation for a synchronous FIFO of DEPTH using read/write pointers with an extra wrap bit.",
+    "constraints": "DEPTH is a power of two.",
+    "expected_output": "full and empty flags computed correctly.",
+    "starter_code": "module top_module #(parameter AW=4)(input clk, input rst_n, input wr, input rd, output full, output empty);\n  // TODO\nendmodule",
+    "solution_code": "module top_module #(parameter AW=4)(input clk, input rst_n, input wr, input rd, output full, output empty);\n  reg [AW:0] wptr, rptr;\n  always @(posedge clk or negedge rst_n) begin\n    if(!rst_n) begin wptr<=0; rptr<=0; end\n    else begin\n      if(wr && !full) wptr<=wptr+1'b1;\n      if(rd && !empty) rptr<=rptr+1'b1;\n    end\n  end\n  assign empty = (wptr==rptr);\n  assign full = (wptr[AW]!=rptr[AW]) && (wptr[AW-1:0]==rptr[AW-1:0]);\nendmodule",
+    "difficulty": "hard",
+    "is_premium": true
+  }
+]

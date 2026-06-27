@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VLSI Forge | Exam + Interview Platform</title>
+    <meta
+      name="description"
+      content="Practice MCQs, coding rounds, notes, and interview packs for VLSI roles."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#006d77" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <script>
+      // PRODUCTION ONLY: set this to your deployed API URL after hosting the backend,
+      // e.g. "https://vlsi-forge-api.onrender.com/api/v1". Leave empty for local use.
+      window.VLSI_API_BASE = "";
+    </script>
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <header class="topbar">
+      <div class="logo">VLSI FORGE</div>
+      <nav>
+        <a href="#tracks">Tracks</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#resources">Resources</a>
+        <a href="#contact">Contribute</a>
+      </nav>
+      <button id="refreshBtn" class="btn ghost">Refresh Data</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Built For VLSI Students And Job Seekers</p>
+        <h1>
+          One Platform For <span>Exam Prep</span>, <span>Interview Mastery</span>, And
+          <span>Career Growth</span>
+        </h1>
+        <p class="subtext">
+          Study Phase 1 and Phase 2 for free. Unlock Phase 3 premium interview packs at INR 299/month.
+          Website and Android app share the same backend, progress, and content engine.
+        </p>
+        <div class="hero-cta">
+          <a class="btn" href="#tracks">Start Learning</a>
+          <a class="btn alt" href="#pricing">See Premium Plan</a>
+        </div>
+        <div class="kpi-grid">
+          <article>
+            <h3 id="subjectCount">-</h3>
+            <p>Subjects</p>
+          </article>
+          <article>
+            <h3 id="freeCount">-</h3>
+            <p>Free Tracks</p>
+          </article>
+          <article>
+            <h3 id="premiumCount">-</h3>
+            <p>Premium Packs</p>
+          </article>
+          <article>
+            <h3 id="planPrice">INR 299</h3>
+            <p>Monthly Premium</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tracks" class="panel">
+        <div class="panel-head">
+          <h2>Learning Tracks</h2>
+          <p>Curated path from fundamentals to top interview rounds. Click any subject to study and take a quiz.</p>
+        </div>
+        <div class="phase-tabs" role="tablist" aria-label="Phase filters">
+          <button class="phase-tab active" data-phase="all">All</button>
+          <button class="phase-tab" data-phase="1">Phase 1</button>
+          <button class="phase-tab" data-phase="2">Phase 2</button>
+          <button class="phase-tab" data-phase="3">Phase 3</button>
+        </div>
+        <div id="subjectGrid" class="subject-grid"></div>
+      </section>
+
+      <section id="resources" class="split">
+        <article class="card">
+          <h3>Student Utility</h3>
+          <ul>
+            <li>MCQ practice with explanations and difficulty tagging</li>
+            <li>Verilog/SystemVerilog/UVM coding tasks</li>
+            <li>Topic notes for fast revision before exams</li>
+            <li>Interview-focused hard sets in premium phase</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Profitability Model</h3>
+          <ul>
+            <li>INR 299/month premium subscription</li>
+            <li>Role-based interview question packs</li>
+            <li>Mock test bundles and certificate upgrades</li>
+            <li>Campus partnerships and sponsored contests</li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="pricing" class="pricing">
+        <article class="price-card free">
+          <h3>Free Plan</h3>
+          <p class="price">INR 0</p>
+          <p>Phase 1 + Phase 2 content for students preparing exams and core interviews.</p>
+          <ul>
+            <li>MCQs + notes</li>
+            <li>Starter coding questions</li>
+            <li>Progress tracking</li>
+          </ul>
+        </article>
+        <article class="price-card premium">
+          <p class="badge">Most Valuable</p>
+          <h3>Phase 3 Premium</h3>
+          <p class="price">INR 299<span>/month</span></p>
+          <p>Advanced interview sets and high-difficulty coding rounds.</p>
+          <ul>
+            <li>Top product-based interview style sets</li>
+            <li>Advanced STA/CDC/debug drills</li>
+            <li>Priority support + upcoming mock interviews</li>
+          </ul>
+          <button id="premiumBtn" class="btn">Get Premium</button>
+        </article>
+      </section>
+
+      <section id="contact" class="panel">
+        <div class="panel-head">
+          <h2>Content Request Box</h2>
+          <p>Share topics to add. This helps keep the platform useful for all students.</p>
+        </div>
+        <form id="requestForm" class="request-form">
+          <input id="studentName" type="text" placeholder="Your name" required />
+          <input id="topicName" type="text" placeholder="Topic request" required />
+          <textarea id="details" rows="4" placeholder="What exact content should be added?"></textarea>
+          <button class="btn" type="submit">Submit Request</button>
+          <p id="formMsg" class="form-msg"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>VLSI Forge • Built for exam and interview success • Android app + website synced by API</p>
+    </footer>
+
+    <div id="studyModal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-head">
+          <h2 id="modalTitle">Subject</h2>
+          <button id="modalClose" class="btn ghost">Close</button>
+        </div>
+        <div class="modal-tabs">
+          <button class="modal-tab active" data-tab="learn">Learn</button>
+          <button class="modal-tab" data-tab="quiz">Quiz</button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
