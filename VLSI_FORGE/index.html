@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VLSI Forge — 1000+ Free VLSI Interview &amp; Exam Questions</title>
+    <meta
+      name="description"
+      content="Free VLSI prep: 1000+ MCQs with explanations, lessons and quizzes on Digital, Verilog, SystemVerilog, UVM, STA, Physical Design and interview packs for NVIDIA, Qualcomm, AMD. Works offline. Install free."
+    />
+    <meta name="keywords" content="VLSI, Verilog, SystemVerilog, UVM, STA, physical design, VLSI interview questions, semiconductor jobs, RTL design, digital electronics, GATE EC, VLSI MCQ" />
+    <meta name="author" content="VLSI Forge" />
+    <!-- Social share preview (WhatsApp, LinkedIn, Twitter) -->
+    <meta property="og:title" content="VLSI Forge — 1000+ Free VLSI Interview &amp; Exam Questions" />
+    <meta property="og:description" content="Master VLSI with 1000+ free practice questions, lessons and quizzes. Track streaks, bookmark questions, works offline. 100% free." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#006d77" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <header class="topbar">
+      <div class="logo">VLSI FORGE</div>
+      <nav>
+        <a href="#tracks">Tracks</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#resources">Resources</a>
+        <a href="#contact">Contribute</a>
+      </nav>
+        <div class="header-right">
+        <button id="refreshBtn" class="btn ghost">Refresh</button>
+        <button id="leaderboardBtn" class="btn ghost">🏆 Leaderboard</button>
+        <div id="authArea"></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Built For VLSI Students And Job Seekers</p>
+        <h1>
+          Crack VLSI <span>Exams</span> &amp; <span>Interviews</span> With
+          <span>1000+ Questions</span>
+        </h1>
+        <p class="subtext">
+          Free forever. Practice 1000+ MCQs with instant explanations, read concise lessons, take
+          timed quizzes, build daily streaks and bookmark tricky questions — all on your phone,
+          even offline. No sign-up needed to start.
+        </p>
+        <div class="hero-cta">
+          <a class="btn" href="#tracks">Start Learning Free</a>
+          <button id="installBtn" class="btn alt hidden">📲 Install App</button>
+        </div>
+        <div class="kpi-grid" id="kpiGrid">
+          <article>
+            <h3 id="subjectCount">-</h3>
+            <p>Subjects</p>
+          </article>
+          <article>
+            <h3 id="questionCount">1000+</h3>
+            <p>Practice Questions</p>
+          </article>
+          <article>
+            <h3 id="freeCount">-</h3>
+            <p>Free Tracks</p>
+          </article>
+          <article>
+            <h3>100%</h3>
+            <p>Free &amp; Offline</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tracks" class="panel">
+        <div class="panel-head">
+          <h2>Subjects</h2>
+          <p>Pick any subject to read lessons, revise notes, take a quiz, and practice coding. Free subjects first, premium packs at the end.</p>
+        </div>
+        <div class="search-bar">
+          <input id="searchInput" type="search" placeholder="🔍 Search subjects or topics..." autocomplete="off" />
+        </div>
+        <div id="subjectGrid" class="subject-grid"></div>
+      </section>
+
+      <section id="resources" class="split">
+        <article class="card">
+          <h3>Student Utility</h3>
+          <ul>
+            <li>MCQ practice with explanations and difficulty tagging</li>
+            <li>Verilog/SystemVerilog/UVM coding tasks</li>
+            <li>Topic notes for fast revision before exams</li>
+            <li>Interview-focused hard sets in premium packs</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Profitability Model</h3>
+          <ul>
+            <li>INR 299/month premium subscription</li>
+            <li>Role-based interview question packs</li>
+            <li>Mock test bundles and certificate upgrades</li>
+            <li>Campus partnerships and sponsored contests</li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="pricing" class="pricing">
+        <article class="price-card free">
+          <h3>Free Plan</h3>
+          <p class="price">INR 0</p>
+          <p>All core subjects, lessons, notes, quizzes and starter coding — free forever.</p>
+          <ul>
+            <li>MCQs + notes</li>
+            <li>Starter coding questions</li>
+            <li>Progress tracking</li>
+          </ul>
+        </article>
+        <article class="price-card premium">
+          <p class="badge">Most Valuable</p>
+          <h3>Premium Packs</h3>
+          <p class="price">INR 299<span>/month</span></p>
+          <p>Advanced interview sets and high-difficulty coding rounds.</p>
+          <ul>
+            <li>Top product-based interview style sets</li>
+            <li>Advanced STA/CDC/debug drills</li>
+            <li>Priority support + upcoming mock interviews</li>
+          </ul>
+          <button id="premiumBtn" class="btn">Get Premium</button>
+        </article>
+      </section>
+
+      <section id="contact" class="panel">
+        <div class="panel-head">
+          <h2>Content Request Box</h2>
+          <p>Share topics to add. This helps keep the platform useful for all students.</p>
+        </div>
+        <form id="requestForm" class="request-form">
+          <input id="studentName" type="text" placeholder="Your name" required />
+          <input id="topicName" type="text" placeholder="Topic request" required />
+          <textarea id="details" rows="4" placeholder="What exact content should be added?"></textarea>
+          <button class="btn" type="submit">Submit Request</button>
+          <p id="formMsg" class="form-msg"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>VLSI Forge • 1000+ free questions • Works offline • Built for exam and interview success</p>
+    </footer>
+
+    <div id="studyModal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-head">
+          <h2 id="modalTitle">Subject</h2>
+          <button id="modalClose" class="btn ghost">Close</button>
+        </div>
+        <div class="modal-tabs">
+          <button class="modal-tab active" data-tab="learn">📘 Learn</button>
+          <button class="modal-tab" data-tab="notes">📝 Notes</button>
+          <button class="modal-tab" data-tab="quiz">🧠 Quiz</button>
+          <button class="modal-tab" data-tab="code">💻 Code</button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay hidden">
+      <div class="modal modal-sm">
+        <div class="modal-head">
+          <h2 id="authTitle">Sign In</h2>
+          <button id="authClose" class="btn ghost">✕</button>
+        </div>
+        <div id="authBody" class="modal-body">
+          <input id="authName" type="text" placeholder="Full name" class="auth-input hidden" />
+          <input id="authEmail" type="email" placeholder="Email" class="auth-input" />
+          <input id="authPassword" type="password" placeholder="Password" class="auth-input" />
+          <button id="authSubmit" class="btn" style="width:100%;margin-top:10px">Sign In</button>
+          <p id="authToggle" class="auth-toggle">No account? <a href="#">Register</a></p>
+          <p id="authError" class="auth-error"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="lbModal" class="modal-overlay hidden">
+      <div class="modal modal-sm">
+        <div class="modal-head">
+          <h2>🏆 Leaderboard</h2>
+          <button id="lbClose" class="btn ghost">✕</button>
+        </div>
+        <div id="lbBody" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Streak Banner -->
+    <div id="streakBanner" class="streak-banner hidden"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

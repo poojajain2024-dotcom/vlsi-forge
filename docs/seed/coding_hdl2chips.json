@@ -1,0 +1,326 @@
+[
+  {
+    "subject_slug": "digital-electronics",
+    "title": "Basic Gates: AND, OR, NOT",
+    "prompt": "Build a module that outputs the AND, OR and NOT of two 1-bit inputs a and b.",
+    "constraints": "Module name: top. Inputs: a, b. Outputs: y_and, y_or, y_not (NOT of a).",
+    "expected_output": "y_and = a & b; y_or = a | b; y_not = ~a.",
+    "starter_code": "module top(input a, input b, output y_and, output y_or, output y_not);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input a, input b, output y_and, output y_or, output y_not);\n  assign y_and = a & b;\n  assign y_or  = a | b;\n  assign y_not = ~a;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "Universal Gates: NAND, NOR, XOR, XNOR",
+    "prompt": "Produce NAND, NOR, XOR and XNOR of two 1-bit inputs.",
+    "constraints": "Module name: top. Inputs: a, b. Outputs: y_nand, y_nor, y_xor, y_xnor.",
+    "expected_output": "Standard truth tables for each gate.",
+    "starter_code": "module top(input a, input b, output y_nand, output y_nor, output y_xor, output y_xnor);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input a, input b, output y_nand, output y_nor, output y_xor, output y_xnor);\n  assign y_nand = ~(a & b);\n  assign y_nor  = ~(a | b);\n  assign y_xor  = a ^ b;\n  assign y_xnor = ~(a ^ b);\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "2:1 Multiplexer",
+    "prompt": "Select input i0 when sel=0 and i1 when sel=1.",
+    "constraints": "Module name: top. Inputs: i0, i1, sel. Output: y.",
+    "expected_output": "y = sel ? i1 : i0.",
+    "starter_code": "module top(input i0, input i1, input sel, output y);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input i0, input i1, input sel, output y);\n  assign y = sel ? i1 : i0;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4:1 Multiplexer",
+    "prompt": "Route one of four 1-bit inputs to the output based on a 2-bit select.",
+    "constraints": "Module name: top. Inputs: i[3:0], sel[1:0]. Output: y.",
+    "expected_output": "y = i[sel].",
+    "starter_code": "module top(input [3:0] i, input [1:0] sel, output reg y);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] i, input [1:0] sel, output reg y);\n  always @(*) begin\n    case (sel)\n      2'd0: y = i[0];\n      2'd1: y = i[1];\n      2'd2: y = i[2];\n      default: y = i[3];\n    endcase\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "2-to-4 Decoder with Enable",
+    "prompt": "Activate exactly one of four outputs based on a 2-bit input when enable is high; all zero when disabled.",
+    "constraints": "Module name: top. Inputs: a[1:0], en. Output: y[3:0] (one-hot).",
+    "expected_output": "en=1 -> y = 1<<a; en=0 -> y = 0000.",
+    "starter_code": "module top(input [1:0] a, input en, output reg [3:0] y);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [1:0] a, input en, output reg [3:0] y);\n  always @(*) begin\n    y = 4'b0000;\n    if (en) y[a] = 1'b1;\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4-to-2 Priority Encoder",
+    "prompt": "Encode the index of the highest set bit; assert valid if any input is high.",
+    "constraints": "Module name: top. Input: in[3:0]. Outputs: y[1:0], valid. Bit 3 has highest priority.",
+    "expected_output": "valid=0 when in=0; else y = index of MSB that is 1.",
+    "starter_code": "module top(input [3:0] in, output reg [1:0] y, output reg valid);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] in, output reg [1:0] y, output reg valid);\n  always @(*) begin\n    valid = 1'b1;\n    casez (in)\n      4'b1???: y = 2'd3;\n      4'b01??: y = 2'd2;\n      4'b001?: y = 2'd1;\n      4'b0001: y = 2'd0;\n      default: begin y = 2'd0; valid = 1'b0; end\n    endcase\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "Half Adder",
+    "prompt": "Add two 1-bit numbers producing sum and carry.",
+    "constraints": "Module name: top. Inputs: a, b. Outputs: sum, cout.",
+    "expected_output": "sum = a ^ b; cout = a & b.",
+    "starter_code": "module top(input a, input b, output sum, output cout);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input a, input b, output sum, output cout);\n  assign sum  = a ^ b;\n  assign cout = a & b;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "Full Adder",
+    "prompt": "Add three 1-bit values (a, b, cin) producing sum and carry-out.",
+    "constraints": "Module name: top. Inputs: a, b, cin. Outputs: sum, cout.",
+    "expected_output": "sum = a^b^cin; cout = (a&b)|(cin&(a^b)).",
+    "starter_code": "module top(input a, input b, input cin, output sum, output cout);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input a, input b, input cin, output sum, output cout);\n  assign sum  = a ^ b ^ cin;\n  assign cout = (a & b) | (cin & (a ^ b));\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4-bit Ripple Carry Adder",
+    "prompt": "Add two 4-bit numbers with carry-in, producing a 4-bit sum and carry-out.",
+    "constraints": "Module name: top. Inputs: a[3:0], b[3:0], cin. Outputs: sum[3:0], cout.",
+    "expected_output": "{cout, sum} = a + b + cin.",
+    "starter_code": "module top(input [3:0] a, input [3:0] b, input cin, output [3:0] sum, output cout);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] a, input [3:0] b, input cin, output [3:0] sum, output cout);\n  assign {cout, sum} = a + b + cin;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4-bit Magnitude Comparator",
+    "prompt": "Compare two 4-bit numbers and assert gt, eq, lt.",
+    "constraints": "Module name: top. Inputs: a[3:0], b[3:0]. Outputs: gt, eq, lt.",
+    "expected_output": "gt=a>b, eq=a==b, lt=a<b (exactly one high).",
+    "starter_code": "module top(input [3:0] a, input [3:0] b, output gt, output eq, output lt);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] a, input [3:0] b, output gt, output eq, output lt);\n  assign gt = (a > b);\n  assign eq = (a == b);\n  assign lt = (a < b);\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "D Latch (Level Sensitive)",
+    "prompt": "Build a transparent D latch: when enable is high q follows d; when low q holds.",
+    "constraints": "Module name: top. Inputs: en, d. Output: q. Use always @(*).",
+    "expected_output": "en=1 -> q=d; en=0 -> q unchanged.",
+    "starter_code": "module top(input en, input d, output reg q);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input en, input d, output reg q);\n  always @(*)\n    if (en) q = d;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "D Flip-Flop with Async Reset",
+    "prompt": "Capture d on the rising clock edge; clear q to 0 asynchronously when rst_n is low.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, d. Output: q. Use non-blocking.",
+    "expected_output": "On posedge clk, q<=d; rst_n=0 forces q=0.",
+    "starter_code": "module top(input clk, input rst_n, input d, output reg q);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input d, output reg q);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) q <= 1'b0;\n    else        q <= d;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "JK Flip-Flop",
+    "prompt": "Implement a JK flip-flop: 00 hold, 01 reset, 10 set, 11 toggle.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, j, k. Output: q.",
+    "expected_output": "q+ = j&~q | ~k&q.",
+    "starter_code": "module top(input clk, input rst_n, input j, input k, output reg q);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input j, input k, output reg q);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) q <= 1'b0;\n    else        q <= (j & ~q) | (~k & q);\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "T Flip-Flop",
+    "prompt": "Toggle q on each clock edge when t=1, hold when t=0.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, t. Output: q.",
+    "expected_output": "q+ = t ^ q.",
+    "starter_code": "module top(input clk, input rst_n, input t, output reg q);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input t, output reg q);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) q <= 1'b0;\n    else        q <= t ^ q;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4-bit Shift Register (SISO)",
+    "prompt": "Shift serial input in by one position each clock; serial output is the last bit.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, sin. Output: sout. 4-bit internal register, shift left.",
+    "expected_output": "Data appears at sout after 4 clocks.",
+    "starter_code": "module top(input clk, input rst_n, input sin, output sout);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input sin, output sout);\n  reg [3:0] sr;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) sr <= 4'b0;\n    else        sr <= {sr[2:0], sin};\n  assign sout = sr[3];\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4-bit Synchronous Up Counter",
+    "prompt": "Count 0..15 and wrap, with synchronous active-high clear.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, clr. Output: cnt[3:0].",
+    "expected_output": "Increments each clock; clr forces 0.",
+    "starter_code": "module top(input clk, input rst_n, input clr, output reg [3:0] cnt);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input clr, output reg [3:0] cnt);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n)   cnt <= 4'd0;\n    else if (clr) cnt <= 4'd0;\n    else          cnt <= cnt + 4'd1;\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "Mod-10 (BCD) Counter",
+    "prompt": "Count 0..9 then wrap to 0, asserting tc on the count of 9.",
+    "constraints": "Module name: top. Inputs: clk, rst_n. Outputs: cnt[3:0], tc.",
+    "expected_output": "Sequence 0,1,...,9,0,...; tc=1 when cnt==9.",
+    "starter_code": "module top(input clk, input rst_n, output reg [3:0] cnt, output tc);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, output reg [3:0] cnt, output tc);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n)        cnt <= 4'd0;\n    else if (cnt == 4'd9) cnt <= 4'd0;\n    else               cnt <= cnt + 4'd1;\n  assign tc = (cnt == 4'd9);\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "4-bit Ring Counter",
+    "prompt": "Circulate a single 1 through a 4-bit register (one-hot), reset state 0001.",
+    "constraints": "Module name: top. Inputs: clk, rst_n. Output: q[3:0].",
+    "expected_output": "0001 -> 0010 -> 0100 -> 1000 -> 0001 ...",
+    "starter_code": "module top(input clk, input rst_n, output reg [3:0] q);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, output reg [3:0] q);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) q <= 4'b0001;\n    else        q <= {q[2:0], q[3]};\nendmodule"
+  },
+  {
+    "subject_slug": "digital-electronics",
+    "title": "Sequence Detector FSM (detect 1011)",
+    "prompt": "Assert detected for one cycle whenever the serial input bit stream contains the pattern 1011 (overlapping).",
+    "constraints": "Module name: top. Inputs: clk, rst_n, in. Output: detected. Mealy or Moore allowed.",
+    "expected_output": "detected pulses high when ...1011 is seen.",
+    "starter_code": "module top(input clk, input rst_n, input in, output reg detected);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input in, output reg detected);\n  localparam S0=2'd0, S1=2'd1, S10=2'd2, S101=2'd3;\n  reg [1:0] st, nx;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) st <= S0; else st <= nx;\n  always @(*) begin\n    nx = st; detected = 1'b0;\n    case (st)\n      S0:   nx = in ? S1   : S0;\n      S1:   nx = in ? S1   : S10;\n      S10:  nx = in ? S101 : S0;\n      S101: begin nx = in ? S1 : S10; detected = in; end\n    endcase\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Binary to Gray Code",
+    "prompt": "Convert a 4-bit binary number to Gray code.",
+    "constraints": "Module name: top. Input: bin[3:0]. Output: gray[3:0].",
+    "expected_output": "gray = bin ^ (bin >> 1).",
+    "starter_code": "module top(input [3:0] bin, output [3:0] gray);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] bin, output [3:0] gray);\n  assign gray = bin ^ (bin >> 1);\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Gray to Binary Code",
+    "prompt": "Convert a 4-bit Gray code value back to binary.",
+    "constraints": "Module name: top. Input: gray[3:0]. Output: bin[3:0].",
+    "expected_output": "Each binary bit is XOR of all higher Gray bits.",
+    "starter_code": "module top(input [3:0] gray, output [3:0] bin);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] gray, output [3:0] bin);\n  assign bin[3] = gray[3];\n  assign bin[2] = bin[3] ^ gray[2];\n  assign bin[1] = bin[2] ^ gray[1];\n  assign bin[0] = bin[1] ^ gray[0];\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Even Parity Generator",
+    "prompt": "Generate an even-parity bit for an 8-bit input.",
+    "constraints": "Module name: top. Input: data[7:0]. Output: parity.",
+    "expected_output": "parity = XOR of all 8 bits (1 if odd number of ones).",
+    "starter_code": "module top(input [7:0] data, output parity);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [7:0] data, output parity);\n  assign parity = ^data;\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Rising Edge Detector",
+    "prompt": "Output a one-cycle pulse when the input signal goes from 0 to 1.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, sig. Output: pulse.",
+    "expected_output": "pulse high for one clock on each 0->1 transition of sig.",
+    "starter_code": "module top(input clk, input rst_n, input sig, output pulse);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input sig, output pulse);\n  reg sig_d;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) sig_d <= 1'b0;\n    else        sig_d <= sig;\n  assign pulse = sig & ~sig_d;\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Clock Divider by 2",
+    "prompt": "Generate an output clock at half the input frequency.",
+    "constraints": "Module name: top. Inputs: clk, rst_n. Output: clk_div2.",
+    "expected_output": "clk_div2 toggles once per input clock period (50% duty, f/2).",
+    "starter_code": "module top(input clk, input rst_n, output reg clk_div2);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, output reg clk_div2);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) clk_div2 <= 1'b0;\n    else        clk_div2 <= ~clk_div2;\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Parameterized N-bit Mux 2:1",
+    "prompt": "Implement a width-parameterized 2:1 multiplexer.",
+    "constraints": "Module name: top. Param WIDTH (default 8). Inputs: a[WIDTH-1:0], b[WIDTH-1:0], sel. Output: y[WIDTH-1:0].",
+    "expected_output": "y = sel ? b : a.",
+    "starter_code": "module top #(parameter WIDTH=8) (input [WIDTH-1:0] a, input [WIDTH-1:0] b, input sel, output [WIDTH-1:0] y);\n  // Write code here\nendmodule",
+    "solution_code": "module top #(parameter WIDTH=8) (input [WIDTH-1:0] a, input [WIDTH-1:0] b, input sel, output [WIDTH-1:0] y);\n  assign y = sel ? b : a;\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Traffic Light FSM",
+    "prompt": "Cycle a light through GREEN, YELLOW, RED, advancing one state per clock.",
+    "constraints": "Module name: top. Inputs: clk, rst_n. Output: light[1:0] (0=GREEN,1=YELLOW,2=RED).",
+    "expected_output": "GREEN -> YELLOW -> RED -> GREEN ...",
+    "starter_code": "module top(input clk, input rst_n, output reg [1:0] light);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, output reg [1:0] light);\n  localparam GREEN=2'd0, YELLOW=2'd1, RED=2'd2;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) light <= GREEN;\n    else case (light)\n      GREEN:  light <= YELLOW;\n      YELLOW: light <= RED;\n      RED:    light <= GREEN;\n      default: light <= GREEN;\n    endcase\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "8-bit Barrel Shifter (Logical Left)",
+    "prompt": "Logically shift an 8-bit value left by a 3-bit amount.",
+    "constraints": "Module name: top. Inputs: din[7:0], shamt[2:0]. Output: dout[7:0].",
+    "expected_output": "dout = din << shamt (zeros fill from the right).",
+    "starter_code": "module top(input [7:0] din, input [2:0] shamt, output [7:0] dout);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [7:0] din, input [2:0] shamt, output [7:0] dout);\n  assign dout = din << shamt;\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "title": "Synchronous FIFO",
+    "prompt": "Design a synchronous FIFO with full/empty flags using always_ff.",
+    "constraints": "Module name: top. Params WIDTH, DEPTH (power of 2). Inputs: clk, rst_n, wr, rd, din. Outputs: dout, full, empty.",
+    "expected_output": "Writes when !full, reads when !empty; flags track occupancy.",
+    "starter_code": "module top #(parameter WIDTH=8, DEPTH=8) (input logic clk, rst_n, wr, rd, input logic [WIDTH-1:0] din, output logic [WIDTH-1:0] dout, output logic full, empty);\n  // Write code here\nendmodule",
+    "solution_code": "module top #(parameter WIDTH=8, DEPTH=8) (input logic clk, rst_n, wr, rd, input logic [WIDTH-1:0] din, output logic [WIDTH-1:0] dout, output logic full, empty);\n  localparam AW = $clog2(DEPTH);\n  logic [WIDTH-1:0] mem [0:DEPTH-1];\n  logic [AW:0] wptr, rptr;\n  assign empty = (wptr == rptr);\n  assign full  = (wptr[AW] != rptr[AW]) && (wptr[AW-1:0] == rptr[AW-1:0]);\n  assign dout  = mem[rptr[AW-1:0]];\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin wptr <= '0; rptr <= '0; end\n    else begin\n      if (wr && !full) begin mem[wptr[AW-1:0]] <= din; wptr <= wptr + 1'b1; end\n      if (rd && !empty) rptr <= rptr + 1'b1;\n    end\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "title": "Round-Robin Arbiter (4 requesters)",
+    "prompt": "Grant one of four requests in round-robin order, advancing priority after each grant.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, req[3:0]. Output: gnt[3:0] (one-hot).",
+    "expected_output": "Exactly one grant; fairness rotates among active requesters.",
+    "starter_code": "module top(input logic clk, rst_n, input logic [3:0] req, output logic [3:0] gnt);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input logic clk, rst_n, input logic [3:0] req, output logic [3:0] gnt);\n  logic [1:0] ptr;\n  always_ff @(posedge clk or negedge rst_n)\n    if (!rst_n) ptr <= 2'd0;\n    else if (|gnt) begin\n      casez (gnt)\n        4'b0001: ptr <= 2'd1;\n        4'b0010: ptr <= 2'd2;\n        4'b0100: ptr <= 2'd3;\n        default: ptr <= 2'd0;\n      endcase\n    end\n  always_comb begin\n    gnt = 4'b0000;\n    for (int i = 0; i < 4; i++) begin\n      automatic int idx = (ptr + i) & 2'b11;\n      if (req[idx]) begin gnt[idx] = 1'b1; break; end\n    end\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "title": "One-Hot FSM: Pulse Generator",
+    "prompt": "Using one-hot encoding, output a single-cycle pulse every 3rd clock.",
+    "constraints": "Module name: top. Inputs: clk, rst_n. Output: pulse. Use one-hot states.",
+    "expected_output": "pulse high once every three clocks.",
+    "starter_code": "module top(input logic clk, rst_n, output logic pulse);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input logic clk, rst_n, output logic pulse);\n  typedef enum logic [2:0] {S0=3'b001, S1=3'b010, S2=3'b100} st_t;\n  st_t st;\n  always_ff @(posedge clk or negedge rst_n)\n    if (!rst_n) st <= S0;\n    else unique case (st)\n      S0: st <= S1;\n      S1: st <= S2;\n      S2: st <= S0;\n      default: st <= S0;\n    endcase\n  assign pulse = (st == S2);\nendmodule"
+  },
+  {
+    "subject_slug": "sva",
+    "title": "Assertion: Request Followed by Acknowledge",
+    "prompt": "Write a concurrent assertion that every req is acknowledged by ack within 1 to 4 cycles.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, req, ack. Bind the property; disable during reset.",
+    "expected_output": "Property passes when ack arrives within 4 cycles of req.",
+    "starter_code": "module top(input clk, input rst_n, input req, input ack);\n  // Write an assert property here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input req, input ack);\n  property p_req_ack;\n    @(posedge clk) disable iff (!rst_n)\n      req |-> ##[1:4] ack;\n  endproperty\n  a_req_ack: assert property (p_req_ack);\nendmodule"
+  },
+  {
+    "subject_slug": "sva",
+    "title": "Assertion: One-Hot Check",
+    "prompt": "Assert that a 4-bit state vector is always exactly one-hot.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, state[3:0]. Use $onehot.",
+    "expected_output": "Fails if zero or more than one bit is set.",
+    "starter_code": "module top(input clk, input rst_n, input [3:0] state);\n  // Write an assert property here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input [3:0] state);\n  a_onehot: assert property (\n    @(posedge clk) disable iff (!rst_n) $onehot(state)\n  );\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-verification",
+    "title": "Constrained Random Packet Class",
+    "prompt": "Create a transaction class with a random 8-bit length constrained to 1..64 and a 2-bit kind, and a method to print it.",
+    "constraints": "Class name: packet. Fields: rand len[7:0], rand kind[1:0]. Constraint len inside [1:64].",
+    "expected_output": "randomize() always yields 1<=len<=64.",
+    "starter_code": "class packet;\n  // declare fields, constraint, and a print() function\nendclass",
+    "solution_code": "class packet;\n  rand bit [7:0] len;\n  rand bit [1:0] kind;\n  constraint c_len { len inside {[1:64]}; }\n  function void print();\n    $display(\"packet kind=%0d len=%0d\", kind, len);\n  endfunction\nendclass"
+  },
+  {
+    "subject_slug": "uvm",
+    "title": "UVM Sequence Body",
+    "prompt": "Write the body() of a uvm_sequence that creates, randomizes and sends 10 items.",
+    "constraints": "Sequence class my_seq #(my_item). Use start_item/finish_item and a loop of 10.",
+    "expected_output": "Ten randomized items are sent to the driver via the sequencer.",
+    "starter_code": "class my_seq extends uvm_sequence #(my_item);\n  `uvm_object_utils(my_seq)\n  function new(string name=\"my_seq\"); super.new(name); endfunction\n  task body();\n    // Write code here\n  endtask\nendclass",
+    "solution_code": "class my_seq extends uvm_sequence #(my_item);\n  `uvm_object_utils(my_seq)\n  function new(string name=\"my_seq\"); super.new(name); endfunction\n  task body();\n    repeat (10) begin\n      my_item it = my_item::type_id::create(\"it\");\n      start_item(it);\n      if (!it.randomize()) `uvm_error(\"SEQ\", \"randomize failed\")\n      finish_item(it);\n    end\n  endtask\nendclass"
+  },
+  {
+    "subject_slug": "bus-protocols",
+    "title": "APB Slave Read/Write",
+    "prompt": "Implement a simple APB slave with a single 32-bit register, supporting read and write with PREADY always high.",
+    "constraints": "Module name: top. APB inputs: pclk, presetn, psel, penable, pwrite, paddr, pwdata. Outputs: prdata, pready.",
+    "expected_output": "Write in access phase updates reg; read returns reg; pready=1.",
+    "starter_code": "module top(input pclk, input presetn, input psel, input penable, input pwrite, input [31:0] paddr, input [31:0] pwdata, output reg [31:0] prdata, output pready);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input pclk, input presetn, input psel, input penable, input pwrite, input [31:0] paddr, input [31:0] pwdata, output reg [31:0] prdata, output pready);\n  reg [31:0] datareg;\n  assign pready = 1'b1;\n  always @(posedge pclk or negedge presetn) begin\n    if (!presetn) datareg <= 32'd0;\n    else if (psel && penable && pwrite) datareg <= pwdata;\n  end\n  always @(*) prdata = (psel && !pwrite) ? datareg : 32'd0;\nendmodule"
+  },
+  {
+    "subject_slug": "sta-basics",
+    "title": "Write Basic SDC Constraints",
+    "prompt": "Write the SDC commands to create a 100 MHz clock on port clk and set input/output delays of 2 ns relative to it.",
+    "constraints": "Use create_clock, set_input_delay, set_output_delay. Clock period 10 ns.",
+    "expected_output": "A 10 ns clock named clk with 2 ns IO delays on all inputs/outputs.",
+    "starter_code": "# Write your SDC constraints here\n# clock port: clk, all inputs: [all_inputs], all outputs: [all_outputs]",
+    "solution_code": "create_clock -name clk -period 10.0 [get_ports clk]\nset_input_delay  -clock clk 2.0 [all_inputs]\nset_output_delay -clock clk 2.0 [all_outputs]\nset_clock_uncertainty 0.2 [get_clocks clk]"
+  }
+]
