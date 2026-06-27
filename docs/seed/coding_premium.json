@@ -1,0 +1,173 @@
+[
+  {
+    "subject_slug": "physical-design",
+    "title": "Multi-Clock SDC Setup",
+    "prompt": "Define two clocks: a 500 MHz core clock on port clk_core and a 200 MHz IO clock on port clk_io, and mark them asynchronous to each other.",
+    "constraints": "Use create_clock and set_clock_groups -asynchronous.",
+    "expected_output": "Two named clocks with correct periods; cross-clock paths are not timed.",
+    "starter_code": "# Write your SDC here\n# clk_core = 500 MHz (2 ns), clk_io = 200 MHz (5 ns)",
+    "solution_code": "create_clock -name clk_core -period 2.0 [get_ports clk_core]\ncreate_clock -name clk_io   -period 5.0 [get_ports clk_io]\nset_clock_groups -asynchronous \\\n  -group {clk_core} -group {clk_io}"
+  },
+  {
+    "subject_slug": "physical-design",
+    "title": "False Path and Multicycle Path",
+    "prompt": "Constrain a reset net to be a false path and allow a slow datapath reg2reg to take 2 cycles.",
+    "constraints": "Use set_false_path for rst_n and set_multicycle_path 2 (setup) with the matching hold exception.",
+    "expected_output": "Reset is not timed; the multicycle path is checked over 2 cycles.",
+    "starter_code": "# Write the timing exceptions here",
+    "solution_code": "set_false_path -from [get_ports rst_n]\nset_multicycle_path 2 -setup -from [get_pins src_reg/Q] -to [get_pins dst_reg/D]\nset_multicycle_path 1 -hold  -from [get_pins src_reg/Q] -to [get_pins dst_reg/D]"
+  },
+  {
+    "subject_slug": "physical-design",
+    "title": "Generated (Divided) Clock",
+    "prompt": "A flop divides clk by 2 to produce clk_div at its Q pin. Define the generated clock for STA.",
+    "constraints": "Use create_generated_clock -divide_by 2 referencing the master clock clk.",
+    "expected_output": "STA sees clk_div as clk/2 derived from clk.",
+    "starter_code": "# Master clock clk already defined on port clk\n# Define the generated clock on div_reg/Q",
+    "solution_code": "create_generated_clock -name clk_div \\\n  -source [get_ports clk] -divide_by 2 \\\n  [get_pins div_reg/Q]"
+  },
+  {
+    "subject_slug": "physical-design",
+    "title": "Input/Output Delay Budget",
+    "prompt": "Set input delay 1.5 ns and output delay 1.2 ns on all data ports relative to clk, and a max transition of 0.3 ns.",
+    "constraints": "Use set_input_delay, set_output_delay, set_max_transition.",
+    "expected_output": "IO timing budgets and a transition design rule are applied.",
+    "starter_code": "# clk already created with create_clock\n# Write the IO and DRC constraints",
+    "solution_code": "set_input_delay  -clock clk 1.5 [remove_from_collection [all_inputs] [get_ports clk]]\nset_output_delay -clock clk 1.2 [all_outputs]\nset_max_transition 0.3 [current_design]"
+  },
+  {
+    "subject_slug": "physical-design",
+    "title": "Clock Uncertainty (Skew + Jitter)",
+    "prompt": "Apply 0.15 ns setup uncertainty and 0.05 ns hold uncertainty to model skew and jitter on clk.",
+    "constraints": "Use set_clock_uncertainty with -setup and -hold.",
+    "expected_output": "Available period is reduced for setup and increased margin required for hold.",
+    "starter_code": "# clk already defined\n# Write the uncertainty constraints",
+    "solution_code": "set_clock_uncertainty -setup 0.15 [get_clocks clk]\nset_clock_uncertainty -hold  0.05 [get_clocks clk]"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "title": "Two-Flop Synchronizer",
+    "prompt": "Synchronize an asynchronous 1-bit signal into the clk domain using two flip-flops.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, async_in. Output: sync_out.",
+    "expected_output": "sync_out is async_in delayed by two clk cycles, metastability-hardened.",
+    "starter_code": "module top(input clk, input rst_n, input async_in, output sync_out);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input async_in, output sync_out);\n  reg s1, s2;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) {s2, s1} <= 2'b00;\n    else        {s2, s1} <= {s1, async_in};\n  assign sync_out = s2;\nendmodule"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "title": "Divisible-by-3 FSM",
+    "prompt": "Read a serial bit stream MSB-first and assert div3 when the number seen so far is divisible by 3.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, in. Output: div3. Track remainder mod 3.",
+    "expected_output": "div3=1 whenever the accumulated value % 3 == 0.",
+    "starter_code": "module top(input clk, input rst_n, input in, output div3);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input in, output div3);\n  reg [1:0] rem;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) rem <= 2'd0;\n    else case ({rem, in})\n      3'b00_0: rem <= 2'd0; 3'b00_1: rem <= 2'd1;\n      3'b01_0: rem <= 2'd2; 3'b01_1: rem <= 2'd0;\n      3'b10_0: rem <= 2'd1; 3'b10_1: rem <= 2'd2;\n      default: rem <= 2'd0;\n    endcase\n  assign div3 = (rem == 2'd0);\nendmodule"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "title": "Population Count (Ones Counter)",
+    "prompt": "Count the number of 1s in an 8-bit input.",
+    "constraints": "Module name: top. Input: data[7:0]. Output: count[3:0].",
+    "expected_output": "count = number of set bits (0..8).",
+    "starter_code": "module top(input [7:0] data, output [3:0] count);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [7:0] data, output [3:0] count);\n  integer i;\n  reg [3:0] c;\n  always @(*) begin\n    c = 4'd0;\n    for (i = 0; i < 8; i = i + 1) c = c + data[i];\n  end\n  assign count = c;\nendmodule"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "title": "Find First Set (Lowest Set Bit Index)",
+    "prompt": "Return the index of the lowest set bit of an 8-bit input, with a valid flag.",
+    "constraints": "Module name: top. Input: data[7:0]. Outputs: idx[2:0], valid.",
+    "expected_output": "idx points to the LSB-most 1; valid=0 if data==0.",
+    "starter_code": "module top(input [7:0] data, output reg [2:0] idx, output reg valid);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [7:0] data, output reg [2:0] idx, output reg valid);\n  integer i;\n  always @(*) begin\n    idx = 3'd0; valid = 1'b0;\n    for (i = 7; i >= 0; i = i - 1)\n      if (data[i]) begin idx = i[2:0]; valid = 1'b1; end\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "title": "Gray Code Counter",
+    "prompt": "Build a 4-bit counter that outputs values in Gray-code order.",
+    "constraints": "Module name: top. Inputs: clk, rst_n. Output: gray[3:0].",
+    "expected_output": "Successive outputs differ by exactly one bit.",
+    "starter_code": "module top(input clk, input rst_n, output [3:0] gray);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, output [3:0] gray);\n  reg [3:0] bin;\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) bin <= 4'd0;\n    else        bin <= bin + 4'd1;\n  assign gray = bin ^ (bin >> 1);\nendmodule"
+  },
+  {
+    "subject_slug": "interview-core-vlsi",
+    "title": "Switch Debouncer",
+    "prompt": "Debounce a noisy button: output stays stable and only updates after the input is steady for N samples.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, noisy. Output: clean. Use a saturating counter (N=4).",
+    "expected_output": "clean follows noisy only after 4 consecutive equal samples.",
+    "starter_code": "module top(input clk, input rst_n, input noisy, output reg clean);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input noisy, output reg clean);\n  reg [1:0] cnt;\n  reg sync;\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin cnt <= 2'd0; clean <= 1'b0; sync <= 1'b0; end\n    else begin\n      sync <= noisy;\n      if (sync == clean) cnt <= 2'd0;\n      else if (cnt == 2'd3) begin clean <= sync; cnt <= 2'd0; end\n      else cnt <= cnt + 2'd1;\n    end\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "title": "Glitch-Free Clock Multiplexer",
+    "prompt": "Select between two clocks clk0 and clk1 without producing glitches on clk_out.",
+    "constraints": "Module name: top. Inputs: clk0, clk1, rst_n, sel. Output: clk_out. Use the standard gated-handshake mux.",
+    "expected_output": "Output switches cleanly only when the target clock is low.",
+    "starter_code": "module top(input clk0, input clk1, input rst_n, input sel, output clk_out);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk0, input clk1, input rst_n, input sel, output clk_out);\n  reg q0a, q0b, q1a, q1b;\n  // path 0 enabled when sel=0 and clk1 path is off\n  always @(posedge clk0 or negedge rst_n)\n    if (!rst_n) q0a <= 1'b0; else q0a <= ~sel & ~q1b;\n  always @(negedge clk0 or negedge rst_n)\n    if (!rst_n) q0b <= 1'b0; else q0b <= q0a;\n  // path 1 enabled when sel=1 and clk0 path is off\n  always @(posedge clk1 or negedge rst_n)\n    if (!rst_n) q1a <= 1'b0; else q1a <= sel & ~q0b;\n  always @(negedge clk1 or negedge rst_n)\n    if (!rst_n) q1b <= 1'b0; else q1b <= q1a;\n  assign clk_out = (clk0 & q0b) | (clk1 & q1b);\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "title": "Clock Gating Cell (Latch-Based)",
+    "prompt": "Implement an integrated clock-gating cell: gate clk with enable, using a low-active latch to avoid glitches.",
+    "constraints": "Module name: top. Inputs: clk, en. Output: gclk. Latch en on the low phase of clk.",
+    "expected_output": "gclk pulses only when enable was sampled high; no partial clock pulses.",
+    "starter_code": "module top(input clk, input en, output gclk);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input en, output gclk);\n  reg en_lat;\n  always @(*)\n    if (!clk) en_lat = en;   // transparent when clk low\n  assign gclk = clk & en_lat;\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "title": "Pulse Synchronizer (Toggle Handshake)",
+    "prompt": "Pass a single-cycle pulse from a fast source clock to a slower destination clock safely.",
+    "constraints": "Module name: top. Inputs: sclk, dclk, rst_n, pulse_in. Output: pulse_out. Use toggle + 2-flop sync + edge detect.",
+    "expected_output": "Each src pulse produces exactly one dst pulse.",
+    "starter_code": "module top(input sclk, input dclk, input rst_n, input pulse_in, output pulse_out);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input sclk, input dclk, input rst_n, input pulse_in, output pulse_out);\n  reg tog;\n  always @(posedge sclk or negedge rst_n)\n    if (!rst_n) tog <= 1'b0; else if (pulse_in) tog <= ~tog;\n  reg s1, s2, s3;\n  always @(posedge dclk or negedge rst_n)\n    if (!rst_n) {s3, s2, s1} <= 3'b000;\n    else        {s3, s2, s1} <= {s2, s1, tog};\n  assign pulse_out = s3 ^ s2;\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-qualcomm",
+    "title": "Low-Power Counter with Enable",
+    "prompt": "Build an 8-bit counter that only toggles flops when count_en is high (clock-enable style, saves power).",
+    "constraints": "Module name: top. Inputs: clk, rst_n, count_en. Output: cnt[7:0].",
+    "expected_output": "cnt holds when count_en=0, increments when count_en=1.",
+    "starter_code": "module top(input clk, input rst_n, input count_en, output reg [7:0] cnt);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input count_en, output reg [7:0] cnt);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n)        cnt <= 8'd0;\n    else if (count_en) cnt <= cnt + 8'd1;\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "title": "Valid-Ready Skid Buffer",
+    "prompt": "Implement a 1-deep skid buffer that registers a valid/ready stream without dropping data when downstream stalls.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, in_valid, in_data[7:0], out_ready. Outputs: in_ready, out_valid, out_data[7:0].",
+    "expected_output": "No data loss; in_ready deasserts when the buffer is full and downstream is stalled.",
+    "starter_code": "module top(input clk, input rst_n, input in_valid, input [7:0] in_data, input out_ready, output in_ready, output out_valid, output [7:0] out_data);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input in_valid, input [7:0] in_data, input out_ready, output in_ready, output out_valid, output [7:0] out_data);\n  reg full;\n  reg [7:0] buf_data;\n  assign in_ready  = !full;\n  assign out_valid = full;\n  assign out_data  = buf_data;\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin full <= 1'b0; buf_data <= 8'd0; end\n    else begin\n      if (in_valid && in_ready) begin buf_data <= in_data; full <= 1'b1; end\n      else if (out_valid && out_ready) full <= 1'b0;\n    end\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "title": "One-Hot to Binary Encoder",
+    "prompt": "Convert an 8-bit one-hot input to a 3-bit binary index.",
+    "constraints": "Module name: top. Input: onehot[7:0] (exactly one bit set). Output: bin[2:0].",
+    "expected_output": "bin = index of the set bit.",
+    "starter_code": "module top(input [7:0] onehot, output reg [2:0] bin);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [7:0] onehot, output reg [2:0] bin);\n  integer i;\n  always @(*) begin\n    bin = 3'd0;\n    for (i = 0; i < 8; i = i + 1)\n      if (onehot[i]) bin = i[2:0];\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "title": "Pipelined 8-bit Adder (2 stages)",
+    "prompt": "Add two 8-bit numbers with one pipeline register so the sum appears one cycle later.",
+    "constraints": "Module name: top. Inputs: clk, rst_n, a[7:0], b[7:0]. Output: sum[8:0] (registered).",
+    "expected_output": "sum = a + b, delayed by one clock.",
+    "starter_code": "module top(input clk, input rst_n, input [7:0] a, input [7:0] b, output reg [8:0] sum);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input clk, input rst_n, input [7:0] a, input [7:0] b, output reg [8:0] sum);\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) sum <= 9'd0;\n    else        sum <= a + b;\nendmodule"
+  },
+  {
+    "subject_slug": "interview-company-nvidia-amd",
+    "title": "Fixed-Priority Arbiter (4 requests)",
+    "prompt": "Grant the lowest-index active request among four; lower index has higher priority.",
+    "constraints": "Module name: top. Input: req[3:0]. Output: gnt[3:0] (one-hot, at most one set).",
+    "expected_output": "gnt selects the lowest-index requesting bit.",
+    "starter_code": "module top(input [3:0] req, output [3:0] gnt);\n  // Write code here\nendmodule",
+    "solution_code": "module top(input [3:0] req, output [3:0] gnt);\n  assign gnt[0] = req[0];\n  assign gnt[1] = req[1] & ~req[0];\n  assign gnt[2] = req[2] & ~req[1] & ~req[0];\n  assign gnt[3] = req[3] & ~req[2] & ~req[1] & ~req[0];\nendmodule"
+  }
+]
