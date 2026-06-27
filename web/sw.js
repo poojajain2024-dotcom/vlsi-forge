@@ -1,9 +1,10 @@
 // VLSI Forge service worker — offline caching + installability
-const CACHE = "vlsi-forge-v1";
+const CACHE = "vlsi-forge-v2";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
+  "./data.js",
   "./app.js",
   "./manifest.webmanifest",
   "./icon.svg",
@@ -25,12 +26,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-  // Never cache API calls — always go to network so data stays fresh.
-  if (request.url.includes("/api/")) {
-    event.respondWith(fetch(request).catch(() => new Response("[]", { headers: { "Content-Type": "application/json" } })));
-    return;
-  }
-  // Cache-first for app shell assets.
+  // Cache-first for everything — the app is fully self-contained (no backend).
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request).then((res) => {
       const copy = res.clone();

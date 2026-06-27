@@ -558,4 +558,5 @@ footer {
 .lb-table th, .lb-table td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: left; }
 .lb-table th { font-weight: 700; color: var(--brand); }
 .lb-table tr:first-child td { font-weight: 700; }
+.lb-table tr.me td { background: rgba(99, 102, 241, .12); font-weight: 700; }
 
