@@ -32,25 +32,9 @@
     "monthly_price_inr": 0
   },
   {
-    "slug": "systemverilog-verification",
-    "title": "SystemVerilog Verification",
-    "description": "OOP, interfaces, mailboxes, constrained random, and checkers.",
-    "phase": 2,
-    "is_premium": false,
-    "monthly_price_inr": 0
-  },
-  {
     "slug": "uvm",
     "title": "UVM",
     "description": "UVM architecture, sequences, drivers, monitors, scoreboards.",
-    "phase": 2,
-    "is_premium": false,
-    "monthly_price_inr": 0
-  },
-  {
-    "slug": "sva",
-    "title": "SVA Assertions",
-    "description": "Concurrent assertions, implication operators, and formal intent.",
     "phase": 2,
     "is_premium": false,
     "monthly_price_inr": 0
