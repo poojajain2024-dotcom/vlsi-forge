@@ -349,6 +349,7 @@ modalTabs.forEach(tab => tab.addEventListener("click", () => {
   modalTabs.forEach(t => t.classList.remove("active"));
   tab.classList.add("active");
   activeTab = tab.dataset.tab;
+  lessonIndex = null;
   if (activeTab === "learn") renderLearn();
   else if (activeTab === "notes") renderNotes();
   else if (activeTab === "code") renderCode();
@@ -358,11 +359,46 @@ modalTabs.forEach(tab => tab.addEventListener("click", () => {
 function openSubject(id, title) {
   activeSubjectId = id;
   activeTab = "learn";
+  lessonIndex = null;
   modalTabs.forEach(t => t.classList.toggle("active", t.dataset.tab === "learn"));
   modalTitle.textContent = title || "Subject";
   studyModal.classList.remove("hidden");
   renderLearn();
 }
+
+// ── Table-of-contents lesson navigation (pick a topic, read it on its own) ─────
+let lessonIndex = null;
+
+function lessonTOC(items, kind, introHtml) {
+  return (introHtml || "") + `<div class="toc">` + items.map((t, idx) => `
+    <button class="toc-item" data-kind="${kind}" data-idx="${idx}">
+      <span class="toc-num">${idx + 1}</span>
+      <span class="toc-text"><strong>${escapeHtml(t.title)}</strong>
+        <span class="muted">${escapeHtml(t.topic)}${t.reading_minutes ? " • " + t.reading_minutes + " min" : ""}</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </button>`).join("") + `</div>`;
+}
+
+function lessonDetail(items, kind, idx) {
+  const t = items[idx];
+  const prev = idx > 0 ? `<button class="btn ghost sm" data-kind="${kind}" data-idx="${idx - 1}">‹ Prev</button>` : `<span></span>`;
+  const next = idx < items.length - 1 ? `<button class="btn ghost sm" data-kind="${kind}" data-idx="${idx + 1}">Next ›</button>` : `<span></span>`;
+  return `
+    <button class="btn ghost sm toc-back" data-back="${kind}">‹ All topics</button>
+    <h3 class="lesson-title">${escapeHtml(t.title)}</h3>
+    <p class="muted lesson-sub">${escapeHtml(t.topic)}${t.reading_minutes ? " • " + t.reading_minutes + " min read" : ""}</p>
+    <div class="lesson-md">${mdToHtml(t.content_markdown)}</div>
+    <div class="lesson-nav">${prev}${next}</div>`;
+}
+
+// Delegated clicks for the TOC list, back button and prev/next.
+modalBody.addEventListener("click", e => {
+  const back = e.target.closest("[data-back]");
+  if (back) { lessonIndex = null; (back.dataset.back === "learn" ? renderLearn() : renderNotes()); modalBody.scrollTop = 0; return; }
+  const item = e.target.closest("[data-idx][data-kind]");
+  if (item) { lessonIndex = Number(item.dataset.idx); (item.dataset.kind === "learn" ? renderLearn() : renderNotes()); modalBody.scrollTop = 0; }
+});
 
 function renderLearn() {
   const tutorials = DATA.tutorials
@@ -371,11 +407,12 @@ function renderLearn() {
   if (!tutorials.length) {
     modalBody.innerHTML = "<p class='muted'>No tutorials for this subject yet. Try the Notes or Quiz tab.</p>"; return;
   }
-  modalBody.innerHTML = tutorials.map(t => `
-    <details class="lesson">
-      <summary><strong>${escapeHtml(t.title)}</strong><span class="muted"> • ${escapeHtml(t.topic)} • ${t.reading_minutes} min</span></summary>
-      <div class="lesson-md">${mdToHtml(t.content_markdown)}</div>
-    </details>`).join("");
+  if (lessonIndex == null || lessonIndex >= tutorials.length) {
+    const intro = `<p class="muted toc-intro">📘 ${tutorials.length} topics — tap any topic to learn it in full.</p>`;
+    modalBody.innerHTML = lessonTOC(tutorials, "learn", intro);
+  } else {
+    modalBody.innerHTML = lessonDetail(tutorials, "learn", lessonIndex);
+  }
 }
 
 function renderNotes() {
@@ -383,12 +420,12 @@ function renderNotes() {
   if (!notes.length) {
     modalBody.innerHTML = "<p class='muted'>No quick notes for this subject yet. Try the Learn or Quiz tab.</p>"; return;
   }
-  modalBody.innerHTML = `<p class="muted" style="margin:0 0 .6rem">Quick revision notes — perfect right before an exam or interview.</p>` +
-    notes.map(n => `
-    <details class="lesson" open>
-      <summary><strong>${escapeHtml(n.title)}</strong><span class="muted"> • ${escapeHtml(n.topic)}</span></summary>
-      <div class="lesson-md">${mdToHtml(n.content_markdown)}</div>
-    </details>`).join("");
+  if (lessonIndex == null || lessonIndex >= notes.length) {
+    const intro = `<p class="muted toc-intro">📝 Quick revision notes — tap one to read it before an exam or interview.</p>`;
+    modalBody.innerHTML = lessonTOC(notes, "notes", intro);
+  } else {
+    modalBody.innerHTML = lessonDetail(notes, "notes", lessonIndex);
+  }
 }
 
 function renderCode() {
