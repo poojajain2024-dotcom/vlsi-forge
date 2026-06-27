@@ -258,6 +258,50 @@ function escapeHtml(v) {
   return String(v == null ? "" : v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
+// ── Minimal, safe Markdown renderer (headings, tables, code, lists, bold) ──────
+function mdInline(s) {
+  s = escapeHtml(s);
+  s = s.replace(/`([^`]+)`/g, (m, c) => `<code>${c}</code>`);
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  return s;
+}
+function mdToHtml(md) {
+  const lines = String(md == null ? "" : md).replace(/\r\n/g, "\n").split("\n");
+  let html = "", i = 0, listType = null;
+  const closeList = () => { if (listType) { html += `</${listType}>`; listType = null; } };
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    // fenced code block
+    if (/^```/.test(trimmed)) {
+      closeList(); i++; let code = "";
+      while (i < lines.length && !/^```/.test(lines[i].trim())) { code += lines[i] + "\n"; i++; }
+      i++;
+      html += `<pre class="md-code"><code>${escapeHtml(code.replace(/\n$/, ""))}</code></pre>`;
+      continue;
+    }
+    // table (header row + |---| separator)
+    if (line.includes("|") && i + 1 < lines.length && lines[i + 1].includes("|") && /^[\s|:-]+$/.test(lines[i + 1]) && lines[i + 1].includes("-")) {
+      closeList();
+      const parseRow = r => r.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map(c => c.trim());
+      const headers = parseRow(line); i += 2;
+      let t = `<table class="md-table"><thead><tr>${headers.map(h => `<th>${mdInline(h)}</th>`).join("")}</tr></thead><tbody>`;
+      while (i < lines.length && lines[i].includes("|")) { t += `<tr>${parseRow(lines[i]).map(c => `<td>${mdInline(c)}</td>`).join("")}</tr>`; i++; }
+      html += t + "</tbody></table>";
+      continue;
+    }
+    let m;
+    if ((m = /^(#{1,6})\s+(.*)$/.exec(trimmed))) { closeList(); const lv = Math.min(m[1].length + 1, 6); html += `<h${lv} class="md-h">${mdInline(m[2])}</h${lv}>`; i++; continue; }
+    if (/^>\s?/.test(trimmed)) { closeList(); html += `<blockquote class="md-quote">${mdInline(trimmed.replace(/^>\s?/, ""))}</blockquote>`; i++; continue; }
+    if (/^[-*]\s+/.test(trimmed)) { if (listType !== "ul") { closeList(); html += "<ul class='md-list'>"; listType = "ul"; } html += `<li>${mdInline(trimmed.replace(/^[-*]\s+/, ""))}</li>`; i++; continue; }
+    if (/^\d+\.\s+/.test(trimmed)) { if (listType !== "ol") { closeList(); html += "<ol class='md-list'>"; listType = "ol"; } html += `<li>${mdInline(trimmed.replace(/^\d+\.\s+/, ""))}</li>`; i++; continue; }
+    if (trimmed === "") { closeList(); i++; continue; }
+    closeList(); html += `<p class="md-p">${mdInline(trimmed)}</p>`; i++;
+  }
+  closeList();
+  return html;
+}
+
 // ── Search ────────────────────────────────────────────────────────────────────
 searchInput.addEventListener("input", () => {
   searchQuery = searchInput.value.trim();
@@ -330,7 +374,7 @@ function renderLearn() {
   modalBody.innerHTML = tutorials.map(t => `
     <details class="lesson">
       <summary><strong>${escapeHtml(t.title)}</strong><span class="muted"> • ${escapeHtml(t.topic)} • ${t.reading_minutes} min</span></summary>
-      <pre class="lesson-body">${escapeHtml(t.content_markdown)}</pre>
+      <div class="lesson-md">${mdToHtml(t.content_markdown)}</div>
     </details>`).join("");
 }
 
@@ -343,7 +387,7 @@ function renderNotes() {
     notes.map(n => `
     <details class="lesson" open>
       <summary><strong>${escapeHtml(n.title)}</strong><span class="muted"> • ${escapeHtml(n.topic)}</span></summary>
-      <pre class="lesson-body">${escapeHtml(n.content_markdown)}</pre>
+      <div class="lesson-md">${mdToHtml(n.content_markdown)}</div>
     </details>`).join("");
 }
 
