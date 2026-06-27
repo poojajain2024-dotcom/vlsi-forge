@@ -384,6 +384,13 @@ async function submitQuiz() {
 renderAuthArea();
 loadDashboard();
 
+// Register service worker for offline + installability (PWA).
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
 const API_BASE = (window.VLSI_API_BASE && window.VLSI_API_BASE.trim())
   ? window.VLSI_API_BASE.replace(/\/$/, "")
   : `http://${API_HOST}:8000/api/v1`;
