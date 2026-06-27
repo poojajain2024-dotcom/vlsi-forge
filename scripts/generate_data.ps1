@@ -41,8 +41,8 @@ function Load-Mapped($patterns) {
 }
 
 $mcqs      = @(Load-Mapped @("mcqs.json", "mcqs_*.json"))
-$tutorials = @(Load-Mapped @("tutorials.json"))
-$notes     = @(Load-Mapped @("notes.json"))
+$tutorials = @(Load-Mapped @("tutorials.json", "tutorials_*.json"))
+$notes     = @(Load-Mapped @("notes.json", "notes_*.json"))
 $coding    = @(Load-Mapped @("coding.json", "coding_*.json"))
 
 $data = [ordered]@{
