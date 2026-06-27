@@ -31,6 +31,7 @@ function Load-Mapped($patterns) {
         $row | Add-Member -NotePropertyName subject_id -NotePropertyValue $mapped -Force
         $row | Add-Member -NotePropertyName id -NotePropertyValue $rid -Force
         $null = $row.PSObject.Properties.Remove("subject_slug")
+        $null = $row.PSObject.Properties.Remove("company")
         $list.Add($row)
         $rid++
       }

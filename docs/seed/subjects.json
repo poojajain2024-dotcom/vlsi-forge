@@ -81,16 +81,16 @@
   },
   {
     "slug": "interview-company-qualcomm",
-    "title": "Company Pack: Qualcomm",
-    "description": "Patterned questions and coding rounds inspired by Qualcomm style.",
+    "title": "Low-Power & SoC Interview Pack",
+    "description": "Advanced low-power design, UPF, CDC, and SoC integration interview questions and coding rounds.",
     "phase": 3,
     "is_premium": true,
     "monthly_price_inr": 299
   },
   {
     "slug": "interview-company-nvidia-amd",
-    "title": "Company Pack: NVIDIA + AMD",
-    "description": "High-difficulty architecture and verification interview drills.",
+    "title": "High-Performance Architecture Pack",
+    "description": "High-difficulty pipelining, memory, datapath, and verification interview drills.",
     "phase": 3,
     "is_premium": true,
     "monthly_price_inr": 299
