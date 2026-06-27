@@ -5,6 +5,20 @@
 
 const DATA = window.VLSI_DATA || { subjects: [], mcqs: [], tutorials: [] };
 
+// ── Subject metadata (icon + accent color) ───────────────────────────────────
+const SUBJECT_META = {
+  "digital-electronics":           { icon: "⚡", color: "#2563eb" },
+  "verilog-hdl":                   { icon: "📟", color: "#7c3aed" },
+  "sta-basics":                    { icon: "⏱",  color: "#dc2626" },
+  "systemverilog-rtl":             { icon: "🔧", color: "#059669" },
+  "uvm":                           { icon: "🧪", color: "#d97706" },
+  "physical-design":               { icon: "📐", color: "#0891b2" },
+  "bus-protocols":                 { icon: "🔌", color: "#9333ea" },
+  "interview-core-vlsi":           { icon: "🏆", color: "#b45309" },
+  "interview-company-qualcomm":    { icon: "💼", color: "#374151" },
+  "interview-company-nvidia-amd":  { icon: "🎮", color: "#16a34a" },
+};
+
 // ── Account / auth state (all local) ─────────────────────────────────────────
 function loadAccounts() { return JSON.parse(localStorage.getItem("vlsi_accounts") || "{}"); }
 function saveAccounts(a) { localStorage.setItem("vlsi_accounts", JSON.stringify(a)); }
@@ -52,9 +66,14 @@ const lbBtn   = document.getElementById("leaderboardBtn");
 
 let searchQuery = "";
 let activeSubjectId = null;
+let activeSubjectSlug = null;
 let activeTab = "learn";
 let quizQuestions = [];
 let quizStart = 0;
+let quizCurrentIndex = 0;
+let quizCorrect = 0;
+let quizAnswered = [];
+let quizDiffFilter = "all";
 let isRegisterMode = false;
 
 // ── Per-user storage helpers ──────────────────────────────────────────────────
@@ -69,6 +88,16 @@ function getStreak() {
 function setStreak(s) { localStorage.setItem(userKey("streak"), JSON.stringify(s)); }
 function getBookmarks() { return JSON.parse(localStorage.getItem(userKey("bookmarks")) || "[]"); }
 function setBookmarks(b) { localStorage.setItem(userKey("bookmarks"), JSON.stringify(b)); }
+
+// ── Topic completion tracking ─────────────────────────────────────────────────
+function getReadTopics(subjectId) {
+  return new Set(JSON.parse(localStorage.getItem(userKey(`read_${subjectId}`)) || "[]"));
+}
+function markTopicRead(subjectId, idx) {
+  const set = getReadTopics(subjectId);
+  set.add(idx);
+  localStorage.setItem(userKey(`read_${subjectId}`), JSON.stringify([...set]));
+}
 
 // ── Auth UI ─────────────────────────────────────────────────────────────────
 function renderAuthArea() {
@@ -228,7 +257,6 @@ function renderSubjects() {
       (s.description || "").toLowerCase().includes(q) ||
       DATA.mcqs.some(m => m.subject_id === s.id && m.question_text.toLowerCase().includes(q)));
   }
-  // Free subjects first, premium packs at the end.
   filtered.sort((a, b) => (a.is_premium ? 1 : 0) - (b.is_premium ? 1 : 0));
   if (!filtered.length) {
     subjectGrid.innerHTML = `<article class="subject-card"><h3>No subjects found</h3><p>${searchQuery ? "Try a different search." : "No content available."}</p></article>`;
@@ -239,16 +267,23 @@ function renderSubjects() {
     const tCount = DATA.tutorials.filter(t => t.subject_id === s.id).length;
     const nCount = (DATA.notes || []).filter(n => n.subject_id === s.id).length;
     const cCount = (DATA.coding || []).filter(c => c.subject_id === s.id).length;
-    const bits = [`📘 ${tCount + nCount} lessons`, `📝 ${qCount} questions`];
+    const totalTopics = tCount + nCount;
+    const readCount = getReadTopics(s.id).size;
+    const pct = totalTopics > 0 ? Math.min(100, Math.round((readCount / totalTopics) * 100)) : 0;
+    const bits = [`📘 ${totalTopics} topics`, `📝 ${qCount} questions`];
     if (cCount) bits.push(`💻 ${cCount} code`);
+    const meta = SUBJECT_META[s.slug] || { icon: "📚", color: "var(--brand)" };
     return `
-    <article class="subject-card clickable" data-id="${s.id}" data-title="${escapeHtml(s.title)}" tabindex="0" role="button">
+    <article class="subject-card clickable" data-id="${s.id}" data-slug="${escapeHtml(s.slug)}" data-title="${escapeHtml(s.title)}" tabindex="0" role="button"
+      style="--subject-color:${meta.color}">
+      <div class="card-icon">${meta.icon}</div>
       <div class="subject-meta">
-        <span class="tag ${s.is_premium ? "premium" : "free"}">${s.is_premium ? `Premium INR ${s.monthly_price_inr}/mo` : "Free"}</span>
+        <span class="tag ${s.is_premium ? "premium" : "free"}">${s.is_premium ? `⭐ Premium INR ${s.monthly_price_inr}/mo` : "Free"}</span>
       </div>
       <h3>${escapeHtml(s.title)}</h3>
       <p>${escapeHtml(s.description)}</p>
       <div class="subject-meta"><span class="muted">${bits.join(" • ")}</span></div>
+      ${pct > 0 ? `<div class="progress-bar" title="${pct}% topics read"><div class="progress-fill" style="width:${pct}%"></div></div>` : ""}
       <span class="card-cta">Open &amp; study →</span>
     </article>`;
   }).join("");
@@ -258,7 +293,57 @@ function escapeHtml(v) {
   return String(v == null ? "" : v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
-// ── Minimal, safe Markdown renderer (headings, tables, code, lists, bold) ──────
+// ── Verilog/SV syntax highlighter ────────────────────────────────────────────
+const SV_KEYWORDS = new Set("module endmodule input output inout wire reg logic bit integer real byte shortint int longint string parameter localparam always always_ff always_comb always_latch initial begin end if else case casex casez endcase for while repeat forever fork join function endfunction task endtask assign posedge negedge generate endgenerate genvar typedef struct union enum class endclass extends virtual rand randc constraint covergroup coverpoint bins cross property sequence assert assume cover interface endinterface modport clocking endclocking package endpackage import export signed unsigned packed unpacked automatic static void super this new null return break continue unique priority inside dist with iff default local protected pure extern".split(" "));
+
+function highlightCode(raw) {
+  const out = [];
+  let i = 0;
+  while (i < raw.length) {
+    // Line comment
+    if (raw[i] === '/' && raw[i+1] === '/') {
+      let j = i; while (j < raw.length && raw[j] !== '\n') j++;
+      out.push(`<span class="hl-cmt">${escapeHtml(raw.slice(i, j))}</span>`); i = j; continue;
+    }
+    // Block comment
+    if (raw[i] === '/' && raw[i+1] === '*') {
+      let j = i + 2; while (j < raw.length && !(raw[j] === '*' && raw[j+1] === '/')) j++;
+      j += 2; out.push(`<span class="hl-cmt">${escapeHtml(raw.slice(i, j))}</span>`); i = j; continue;
+    }
+    // String
+    if (raw[i] === '"') {
+      let j = i + 1; while (j < raw.length && raw[j] !== '"') { if (raw[j] === '\\') j++; j++; }
+      j++; out.push(`<span class="hl-str">${escapeHtml(raw.slice(i, j))}</span>`); i = j; continue;
+    }
+    // Verilog number literal: 4'b1010, 8'hFF, 32'd100
+    const numLit = /^(\d+'[bdohBDOH][0-9a-fA-FxXzZ_?]+)/.exec(raw.slice(i));
+    if (numLit) { out.push(`<span class="hl-num">${escapeHtml(numLit[0])}</span>`); i += numLit[0].length; continue; }
+    // Word
+    const word = /^[a-zA-Z_`$][a-zA-Z0-9_$]*/.exec(raw.slice(i));
+    if (word) {
+      const w = word[0];
+      out.push(SV_KEYWORDS.has(w) ? `<span class="hl-kw">${escapeHtml(w)}</span>` : escapeHtml(w));
+      i += w.length; continue;
+    }
+    // Plain decimal number
+    const dec = /^\d+(\.\d+)?/.exec(raw.slice(i));
+    if (dec) { out.push(`<span class="hl-num">${escapeHtml(dec[0])}</span>`); i += dec[0].length; continue; }
+    // Everything else
+    out.push(escapeHtml(raw[i])); i++;
+  }
+  return out.join('');
+}
+
+// Global copy handler (called from inline onclick)
+function copyCode(btn) {
+  const code = btn.closest('.code-block-wrap').querySelector('code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
+  }).catch(() => { btn.textContent = 'Error'; });
+}
+
+// ── Minimal, safe Markdown renderer ──────────────────────────────────────────
 function mdInline(s) {
   s = escapeHtml(s);
   s = s.replace(/`([^`]+)`/g, (m, c) => `<code>${c}</code>`);
@@ -274,13 +359,18 @@ function mdToHtml(md) {
     const trimmed = line.trim();
     // fenced code block
     if (/^```/.test(trimmed)) {
-      closeList(); i++; let code = "";
+      closeList();
+      const langMatch = trimmed.match(/^```(\w+)?/);
+      const lang = (langMatch && langMatch[1]) ? langMatch[1] : "verilog";
+      i++; let code = "";
       while (i < lines.length && !/^```/.test(lines[i].trim())) { code += lines[i] + "\n"; i++; }
       i++;
-      html += `<pre class="md-code"><code>${escapeHtml(code.replace(/\n$/, ""))}</code></pre>`;
+      const rawCode = code.replace(/\n$/, "");
+      const highlighted = highlightCode(rawCode);
+      html += `<div class="code-block-wrap"><div class="code-header"><span class="code-lang">${escapeHtml(lang)}</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre class="md-code"><code>${highlighted}</code></pre></div>`;
       continue;
     }
-    // table (header row + |---| separator)
+    // table
     if (line.includes("|") && i + 1 < lines.length && lines[i + 1].includes("|") && /^[\s|:-]+$/.test(lines[i + 1]) && lines[i + 1].includes("-")) {
       closeList();
       const parseRow = r => r.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map(c => c.trim());
@@ -334,12 +424,12 @@ form.addEventListener("submit", e => {
 // ── Study modal ───────────────────────────────────────────────────────────────
 subjectGrid.addEventListener("click", e => {
   const card = e.target.closest(".subject-card.clickable");
-  if (card) openSubject(Number(card.dataset.id), card.dataset.title);
+  if (card) openSubject(Number(card.dataset.id), card.dataset.title, card.dataset.slug);
 });
 subjectGrid.addEventListener("keydown", e => {
   if (e.key !== "Enter" && e.key !== " ") return;
   const card = e.target.closest(".subject-card.clickable");
-  if (card) { e.preventDefault(); openSubject(Number(card.dataset.id), card.dataset.title); }
+  if (card) { e.preventDefault(); openSubject(Number(card.dataset.id), card.dataset.title, card.dataset.slug); }
 });
 
 modalClose.addEventListener("click", () => studyModal.classList.add("hidden"));
@@ -353,11 +443,12 @@ modalTabs.forEach(tab => tab.addEventListener("click", () => {
   if (activeTab === "learn") renderLearn();
   else if (activeTab === "notes") renderNotes();
   else if (activeTab === "code") renderCode();
-  else renderQuiz();
+  else { quizDiffFilter = "all"; renderQuiz(); }
 }));
 
-function openSubject(id, title) {
+function openSubject(id, title, slug) {
   activeSubjectId = id;
+  activeSubjectSlug = slug || "";
   activeTab = "learn";
   lessonIndex = null;
   modalTabs.forEach(t => t.classList.toggle("active", t.dataset.tab === "learn"));
@@ -370,17 +461,21 @@ function openSubject(id, title) {
 let lessonIndex = null;
 
 function lessonTOC(items, kind, introHtml) {
-  return (introHtml || "") + `<div class="toc">` + items.map((t, idx) => `
-    <button class="toc-item" data-kind="${kind}" data-idx="${idx}">
-      <span class="toc-num">${idx + 1}</span>
+  const readSet = getReadTopics(activeSubjectId);
+  return (introHtml || "") + `<div class="toc">` + items.map((t, idx) => {
+    const done = readSet.has(idx);
+    return `<button class="toc-item${done ? " done" : ""}" data-kind="${kind}" data-idx="${idx}">
+      <span class="toc-num">${done ? "✓" : idx + 1}</span>
       <span class="toc-text"><strong>${escapeHtml(t.title)}</strong>
         <span class="muted">${escapeHtml(t.topic)}${t.reading_minutes ? " • " + t.reading_minutes + " min" : ""}</span>
       </span>
       <span class="toc-arrow">›</span>
-    </button>`).join("") + `</div>`;
+    </button>`;
+  }).join("") + `</div>`;
 }
 
 function lessonDetail(items, kind, idx) {
+  markTopicRead(activeSubjectId, idx);
   const t = items[idx];
   const prev = idx > 0 ? `<button class="btn ghost sm" data-kind="${kind}" data-idx="${idx - 1}">‹ Prev</button>` : `<span></span>`;
   const next = idx < items.length - 1 ? `<button class="btn ghost sm" data-kind="${kind}" data-idx="${idx + 1}">Next ›</button>` : `<span></span>`;
@@ -428,21 +523,154 @@ function renderNotes() {
   }
 }
 
+// ── Code Lab (Verilog/SV/UVM only) ───────────────────────────────────────────
+const CODE_LAB_SLUGS = ["verilog-hdl", "systemverilog-rtl", "uvm"];
+const cmEditors = new Map(); // key → CodeMirror instance
+
+function checkVerilogSyntax(code) {
+  const errs = [];
+  const modCount    = (code.match(/\bmodule\b/g)    || []).length;
+  const endmodCount = (code.match(/\bendmodule\b/g) || []).length;
+  const begCount    = (code.match(/\bbegin\b/g)     || []).length;
+  const endCount    = (code.match(/\bend\b/g)        || []).length - endmodCount;
+  if (modCount !== endmodCount)  errs.push(`⚠ module/endmodule mismatch (${modCount} vs ${endmodCount})`);
+  if (begCount !== endCount)     errs.push(`⚠ begin/end mismatch (${begCount} vs ${endCount})`);
+  if (modCount === 0)            errs.push(`⚠ No 'module' declaration found`);
+  const lines = code.split('\n');
+  lines.forEach((l, i) => {
+    const trimmed = l.trim();
+    if (trimmed && !trimmed.startsWith('//') && !trimmed.startsWith('/*') &&
+        !trimmed.endsWith(';') && !trimmed.endsWith(',') && !trimmed.endsWith('(') &&
+        !trimmed.endsWith(')') && !trimmed.endsWith('{') && !trimmed.endsWith('}') &&
+        !trimmed.startsWith('`') && !/\b(begin|end|endmodule|endfunction|endtask|else)\b/.test(trimmed) &&
+        trimmed.length > 5) {
+      // light heuristic — don't flag every line
+    }
+  });
+  return errs;
+}
+
 function renderCode() {
-  const probs = (DATA.coding || []).filter(c => c.subject_id === activeSubjectId);
+  const allowedIds = new Set(DATA.subjects
+    .filter(s => CODE_LAB_SLUGS.includes(s.slug))
+    .map(s => s.id));
+
+  const probs = (DATA.coding || []).filter(c => allowedIds.has(c.subject_id));
+
   if (!probs.length) {
-    modalBody.innerHTML = "<p class='muted'>No coding problems for this subject yet. Try the Learn or Quiz tab.</p>"; return;
+    modalBody.innerHTML = "<p class='muted'>No coding problems available.</p>";
+    return;
   }
-  modalBody.innerHTML = `<p class="muted" style="margin:0 0 .6rem">Hands-on coding problems. Try it yourself, then reveal the solution.</p>` +
-    probs.map(c => `
-    <div class="code-problem">
-      <h4>${escapeHtml(c.title)}</h4>
-      <p class="code-prompt">${escapeHtml(c.prompt)}</p>
-      ${c.constraints ? `<p class="muted"><strong>Constraints:</strong> ${escapeHtml(c.constraints)}</p>` : ""}
-      ${c.expected_output ? `<p class="muted"><strong>Expected:</strong> ${escapeHtml(c.expected_output)}</p>` : ""}
-      ${c.starter_code ? `<details class="lesson"><summary><strong>Starter code</strong></summary><pre class="lesson-body code">${escapeHtml(c.starter_code)}</pre></details>` : ""}
-      <details class="lesson"><summary><strong>✅ Show solution</strong></summary><pre class="lesson-body code">${escapeHtml(c.solution_code)}</pre></details>
-    </div>`).join("");
+
+  // Group by subject title
+  const grouped = {};
+  probs.forEach(p => {
+    const subj = DATA.subjects.find(s => s.id === p.subject_id);
+    const key = subj ? subj.title : "Other";
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(p);
+  });
+
+  let html = `<div class="codelab-header">
+    <p class="muted codelab-intro">Write your solution in the editor below. Click <strong>▶ Check &amp; Run</strong> for instant feedback, then <strong>Open Simulator</strong> to execute online.</p>
+  </div>`;
+
+  let probIdx = 0;
+  Object.entries(grouped).forEach(([subjTitle, problems]) => {
+    const meta = Object.values(SUBJECT_META).find(m => problems[0] &&
+      DATA.subjects.find(s => s.id === problems[0].subject_id && SUBJECT_META[s.slug] === m));
+    html += `<h4 class="code-group-title">${escapeHtml(subjTitle)}</h4>`;
+    problems.forEach((c) => {
+      const idx = probIdx++;
+      html += `<div class="code-problem" id="cp_${idx}">
+        <div class="code-prob-header">
+          <h4>${escapeHtml(c.title)}</h4>
+        </div>
+        <p class="code-prompt">${escapeHtml(c.prompt)}</p>
+        ${c.constraints ? `<p class="code-constraint"><strong>Constraints:</strong> ${escapeHtml(c.constraints)}</p>` : ""}
+        ${c.expected_output ? `<p class="code-expected"><strong>Expected:</strong> ${escapeHtml(c.expected_output)}</p>` : ""}
+        <div class="editor-wrap" id="editor_wrap_${idx}">
+          <textarea id="editor_ta_${idx}">${escapeHtml(c.starter_code || "// Write your solution here\n")}</textarea>
+        </div>
+        <div class="code-actions-row">
+          <button class="btn run-btn" data-idx="${idx}">▶ Check &amp; Run</button>
+          <button class="btn ghost sm open-sim-btn" data-idx="${idx}">🌐 Open Simulator</button>
+          <button class="btn ghost sm show-sol-btn" data-idx="${idx}">Show Solution</button>
+        </div>
+        <div class="output-panel hidden" id="output_${idx}"></div>
+        <div class="sol-block hidden" id="sol_${idx}"><div class="code-block-wrap">
+          <div class="code-header"><span class="code-lang">solution</span></div>
+          <pre class="md-code"><code>${highlightCode(c.solution_code || "")}</code></pre>
+        </div></div>
+      </div>`;
+    });
+  });
+
+  cmEditors.clear();
+  modalBody.innerHTML = html;
+
+  // Initialize CodeMirror or fallback textarea
+  let localIdx = 0;
+  Object.values(grouped).forEach(problems => {
+    problems.forEach(() => {
+      const idx = localIdx++;
+      const ta = document.getElementById(`editor_ta_${idx}`);
+      if (!ta) return;
+      if (typeof CodeMirror !== 'undefined') {
+        const cm = CodeMirror.fromTextArea(ta, {
+          mode: "verilog", theme: "monokai",
+          lineNumbers: true, matchBrackets: true,
+          indentUnit: 2, tabSize: 2,
+          extraKeys: { "Tab": cm => cm.execCommand("indentMore") }
+        });
+        cm.setSize("100%", "220px");
+        cmEditors.set(idx, cm);
+      } else {
+        // Graceful fallback: style the textarea
+        ta.style.cssText = "width:100%;height:200px;background:#161b22;color:#e6edf3;font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px;border:none;resize:vertical;border-radius:0 0 8px 8px;";
+      }
+    });
+  });
+
+  // Button handlers
+  modalBody.querySelectorAll(".run-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.idx);
+      const cm = cmEditors.get(idx);
+      const code = cm ? cm.getValue() : (document.getElementById(`editor_ta_${idx}`) || {}).value || "";
+      const errs = checkVerilogSyntax(code);
+      const out = document.getElementById(`output_${idx}`);
+      out.classList.remove("hidden");
+      if (errs.length === 0) {
+        out.innerHTML = `<div class="output-ok">✓ Syntax check passed — no obvious errors found.<br><span class="muted">Click "Open Simulator" to compile and run with Icarus Verilog.</span></div>`;
+      } else {
+        out.innerHTML = `<div class="output-err"><strong>Syntax issues found:</strong><ul>${errs.map(e => `<li>${escapeHtml(e)}</li>`).join("")}</ul></div>`;
+      }
+    });
+  });
+
+  modalBody.querySelectorAll(".open-sim-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.idx);
+      const cm = cmEditors.get(idx);
+      const code = cm ? cm.getValue() : "";
+      navigator.clipboard.writeText(code).catch(() => {});
+      window.open("https://www.edaplayground.com/", "_blank");
+      const out = document.getElementById(`output_${idx}`);
+      out.classList.remove("hidden");
+      out.innerHTML = `<div class="output-info">Code copied to clipboard! EDA Playground opened — paste your code in the left panel, select Icarus Verilog, and click Run.</div>`;
+    });
+  });
+
+  modalBody.querySelectorAll(".show-sol-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.idx);
+      const sol = document.getElementById(`sol_${idx}`);
+      const visible = !sol.classList.contains("hidden");
+      sol.classList.toggle("hidden", visible);
+      btn.textContent = visible ? "Show Solution" : "Hide Solution";
+    });
+  });
 }
 
 function shuffle(arr) {
@@ -452,31 +680,106 @@ function shuffle(arr) {
 }
 
 function renderQuiz() {
-  const pool = DATA.mcqs.filter(m => m.subject_id === activeSubjectId);
-  if (!pool.length) {
-    modalBody.innerHTML = "<p class='muted'>No MCQs for this subject yet.</p>"; return;
-  }
-  quizQuestions = shuffle(pool).slice(0, Math.min(5, pool.length));
+  let pool = DATA.mcqs.filter(m => m.subject_id === activeSubjectId);
+  if (!pool.length) { modalBody.innerHTML = "<p class='muted'>No MCQs for this subject yet.</p>"; return; }
+
+  // Build difficulty filter bar
+  const diffs = ["all", ...new Set(pool.map(m => m.difficulty).filter(Boolean))];
+  const filterHtml = `<div class="quiz-filter">${diffs.map(d =>
+    `<button class="quiz-filter-btn${quizDiffFilter === d ? " active" : ""}" data-diff="${d}">${d === "all" ? "All" : d}</button>`
+  ).join("")}</div>`;
+
+  if (quizDiffFilter !== "all") pool = pool.filter(m => m.difficulty === quizDiffFilter);
+  quizQuestions = shuffle(pool).slice(0, Math.min(10, pool.length));
+  quizCurrentIndex = 0;
+  quizCorrect = 0;
+  quizAnswered = [];
   quizStart = Date.now();
+
+  modalBody.innerHTML = filterHtml;
+  modalBody.querySelectorAll(".quiz-filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      quizDiffFilter = btn.dataset.diff;
+      renderQuiz();
+    });
+  });
+
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const total = quizQuestions.length;
+  const i = quizCurrentIndex;
+  if (i >= total) { renderQuizResult(); return; }
+  const q = quizQuestions[i];
+
+  // Remove previous question block (keep filter bar)
+  const old = modalBody.querySelector(".quiz-question-block");
+  if (old) old.remove();
+
+  const bm = isBookmarked(q.id);
   const opts = [["A","option_a"],["B","option_b"],["C","option_c"],["D","option_d"]];
-  const html = quizQuestions.map((q, i) => {
-    const bm = isBookmarked(q.id);
-    return `<div class="quiz-q" data-qid="${q.id}">
+  const diffTag = q.difficulty ? `<span class="diff-tag diff-${q.difficulty.toLowerCase()}">${q.difficulty}</span>` : "";
+
+  const block = document.createElement("div");
+  block.className = "quiz-question-block";
+  block.innerHTML = `
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label">Question ${i + 1} of ${total}</div>
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${(i / total) * 100}%"></div></div>
+    </div>
+    <div class="quiz-q">
       <p class="quiz-text">${i+1}. ${escapeHtml(q.question_text)}
         <button class="bookmark-btn ${bm ? "active" : ""}" data-mcqid="${q.id}" title="Bookmark">🔖</button>
       </p>
-      ${opts.map(([k,f]) => `<label class="quiz-opt"><input type="radio" name="q${q.id}" value="${k}" /><span>${k}) ${escapeHtml(q[f])}</span></label>`).join("")}
+      ${diffTag}
+      <div class="quiz-opts-list">
+        ${opts.map(([k, f]) => `<button class="quiz-opt-btn" data-val="${k}">${k}) ${escapeHtml(q[f])}</button>`).join("")}
+      </div>
     </div>`;
-  }).join("");
-  modalBody.innerHTML = `${html}<button id="quizSubmit" class="btn">Submit quiz</button><div id="quizScore"></div>`;
-  document.getElementById("quizSubmit").addEventListener("click", submitQuiz);
-  modalBody.querySelectorAll(".bookmark-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const mcqId = Number(btn.dataset.mcqid);
-      const added = toggleBookmark(mcqId);
-      btn.classList.toggle("active", added);
-    });
+
+  modalBody.appendChild(block);
+
+  block.querySelectorAll(".quiz-opt-btn").forEach(btn => {
+    btn.addEventListener("click", () => answerQuestion(q, btn.dataset.val, block));
   });
+  block.querySelector(".bookmark-btn").addEventListener("click", (e) => {
+    const b = e.currentTarget;
+    const added = toggleBookmark(Number(b.dataset.mcqid));
+    b.classList.toggle("active", added);
+  });
+}
+
+function answerQuestion(q, selected, block) {
+  const isCorrect = selected === q.correct_option;
+  if (isCorrect) quizCorrect++;
+  quizAnswered.push({ id: q.id, selected, isCorrect });
+
+  block.querySelectorAll(".quiz-opt-btn").forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.val === q.correct_option) btn.classList.add("correct");
+    if (btn.dataset.val === selected && !isCorrect) btn.classList.add("wrong");
+  });
+
+  const fb = document.createElement("div");
+  fb.className = `quiz-feedback ${isCorrect ? "correct-fb" : "wrong-fb"}`;
+  fb.innerHTML = `<strong>${isCorrect ? "✓ Correct!" : "✗ Wrong"}</strong>${q.explanation ? " " + escapeHtml(q.explanation) : ""}`;
+
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "btn quiz-next-btn";
+  nextBtn.textContent = quizCurrentIndex + 1 < quizQuestions.length ? "Next question →" : "See results";
+  nextBtn.addEventListener("click", () => {
+    quizCurrentIndex++;
+    renderQuizQuestion();
+    modalBody.scrollTop = 0;
+  });
+
+  block.querySelector(".quiz-q").appendChild(fb);
+  block.querySelector(".quiz-q").appendChild(nextBtn);
+
+  // Update progress fill to show current answered
+  const fill = block.querySelector(".quiz-progress-fill");
+  if (fill) fill.style.width = `${((quizCurrentIndex + 1) / quizQuestions.length) * 100}%`;
 }
 
 function gradeFor(pct) {
@@ -484,35 +787,58 @@ function gradeFor(pct) {
   if (pct >= 60) return "C"; if (pct >= 50) return "D"; return "F";
 }
 
-function submitQuiz() {
-  let correct = 0;
-  modalBody.querySelectorAll(".quiz-q").forEach(qEl => {
-    const q = quizQuestions.find(x => x.id === Number(qEl.dataset.qid));
-    if (!q) return;
-    const picked = qEl.querySelector(`input[name="q${q.id}"]:checked`);
-    const selected = picked ? picked.value : null;
-    const isCorrect = selected === q.correct_option;
-    if (isCorrect) correct++;
-    qEl.querySelectorAll(".quiz-opt").forEach(opt => {
-      const v = opt.querySelector("input").value;
-      if (v === q.correct_option) opt.classList.add("correct");
-      if (v === selected && !isCorrect) opt.classList.add("wrong");
-    });
-    const exp = document.createElement("p");
-    exp.className = "quiz-exp"; exp.textContent = q.explanation;
-    qEl.appendChild(exp);
-  });
+function renderQuizResult() {
   const total = quizQuestions.length;
-  const pct = Math.round((correct / total) * 100);
+  const pct = Math.round((quizCorrect / total) * 100);
   const timeSeconds = Math.round((Date.now() - quizStart) / 1000);
-  document.getElementById("quizScore").innerHTML =
-    `<div class="score-card"><strong>${pct}%</strong> • Grade ${gradeFor(pct)} • ${correct}/${total} correct in ${timeSeconds}s</div>`;
-  recordQuiz(correct, total);
+  recordQuiz(quizCorrect, total);
+
+  const msg = pct >= 80 ? "Excellent work! 🎉" : pct >= 60 ? "Good effort! Keep practicing." : "Keep studying — you'll get there! 💪";
+  const opts = { A: "option_a", B: "option_b", C: "option_c", D: "option_d" };
+
+  const reviewHtml = quizAnswered.map((a, i) => {
+    const q = quizQuestions[i];
+    return `<div class="review-item ${a.isCorrect ? "ok" : "err"}">
+      <p class="quiz-text">${i+1}. ${escapeHtml(q.question_text)}</p>
+      <p>Your answer: <strong>${a.selected}) ${escapeHtml(q[opts[a.selected]] || "")}</strong></p>
+      ${!a.isCorrect ? `<p>Correct: <strong class="ok-text">${q.correct_option}) ${escapeHtml(q[opts[q.correct_option]] || "")}</strong></p>` : ""}
+      ${q.explanation ? `<p class="muted">${escapeHtml(q.explanation)}</p>` : ""}
+    </div>`;
+  }).join("");
+
+  modalBody.innerHTML = `
+    <div class="quiz-result">
+      <div class="result-circle"><span class="result-pct">${pct}%</span><span class="result-grade">${gradeFor(pct)}</span></div>
+      <h3>${quizCorrect}/${total} correct &nbsp;·&nbsp; ${timeSeconds}s</h3>
+      <p class="muted">${msg}</p>
+      <button class="btn" id="retakeBtn">Retake quiz</button>
+    </div>
+    <div class="quiz-review"><h4>Review all questions</h4>${reviewHtml}</div>`;
+
+  document.getElementById("retakeBtn").addEventListener("click", renderQuiz);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderAuthArea();
 loadDashboard();
+
+// ── Dark mode toggle ──────────────────────────────────────────────────────────
+const darkToggle = document.getElementById("darkToggle");
+if (darkToggle) {
+  function syncDarkIcon() {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    darkToggle.textContent = isDark ? "☀️" : "🌙";
+    darkToggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+  }
+  syncDarkIcon();
+  darkToggle.addEventListener("click", () => {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("vlsi_theme", next);
+    syncDarkIcon();
+  });
+}
 
 // ── Install app (PWA "Add to Home Screen") ────────────────────────────────────
 let deferredPrompt = null;

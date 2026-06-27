@@ -1,0 +1,128 @@
+[
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Half Adder",
+    "prompt": "Write a Verilog module for a half adder using dataflow (assign) modeling.",
+    "constraints": "Inputs: a, b. Outputs: sum, carry. Use assign statements only.",
+    "expected_output": "sum = a XOR b, carry = a AND b",
+    "starter_code": "module half_adder(\n  input  a, b,\n  output sum, carry\n);\n  // Write your solution here\n\nendmodule",
+    "solution_code": "module half_adder(\n  input  a, b,\n  output sum, carry\n);\n  assign sum   = a ^ b;\n  assign carry = a & b;\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Full Adder",
+    "prompt": "Implement a full adder with carry-in using behavioral (always) modeling.",
+    "constraints": "Inputs: a, b, cin. Outputs: sum, cout (reg type).",
+    "expected_output": "sum = a XOR b XOR cin, cout = majority(a,b,cin)",
+    "starter_code": "module full_adder(\n  input  a, b, cin,\n  output reg sum, cout\n);\n  always @(*) begin\n    // Write your solution here\n  end\nendmodule",
+    "solution_code": "module full_adder(\n  input  a, b, cin,\n  output reg sum, cout\n);\n  always @(*) begin\n    sum  = a ^ b ^ cin;\n    cout = (a & b) | (b & cin) | (a & cin);\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "D Flip-Flop with Async Reset",
+    "prompt": "Implement a D flip-flop with active-low asynchronous reset.",
+    "constraints": "Inputs: clk, rst_n, d. Output: q (reg). Reset sets q to 0.",
+    "expected_output": "q captures d on posedge clk; rst_n=0 forces q=0 immediately",
+    "starter_code": "module d_ff(\n  input  clk, rst_n, d,\n  output reg q\n);\n  // Write your always_ff block here\n\nendmodule",
+    "solution_code": "module d_ff(\n  input  clk, rst_n, d,\n  output reg q\n);\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n) q <= 1'b0;\n    else        q <= d;\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "4-to-1 Multiplexer",
+    "prompt": "Build a 4-to-1 MUX using a case statement in an always block.",
+    "constraints": "Inputs: in[3:0], sel[1:0]. Output: out (reg).",
+    "expected_output": "out = in[sel] based on 2-bit select",
+    "starter_code": "module mux4to1(\n  input  [3:0] in,\n  input  [1:0] sel,\n  output reg   out\n);\n  always @(*) begin\n    // Use a case statement\n  end\nendmodule",
+    "solution_code": "module mux4to1(\n  input  [3:0] in,\n  input  [1:0] sel,\n  output reg   out\n);\n  always @(*) begin\n    case (sel)\n      2'b00: out = in[0];\n      2'b01: out = in[1];\n      2'b10: out = in[2];\n      2'b11: out = in[3];\n      default: out = 1'bx;\n    endcase\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "8-bit Synchronous Counter with Enable and Reset",
+    "prompt": "Write an 8-bit up-counter with synchronous active-high reset and count enable.",
+    "constraints": "Inputs: clk, rst (sync), en. Output: count[7:0] (reg).",
+    "expected_output": "count increments on each posedge when en=1; rst synchronously clears to 0",
+    "starter_code": "module counter8(\n  input        clk,\n  input        rst,\n  input        en,\n  output reg [7:0] count\n);\n  // Your solution here\n\nendmodule",
+    "solution_code": "module counter8(\n  input        clk,\n  input        rst,\n  input        en,\n  output reg [7:0] count\n);\n  always @(posedge clk) begin\n    if (rst)    count <= 8'h00;\n    else if (en) count <= count + 1'b1;\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Parameterized Shift Register",
+    "prompt": "Implement a shift register with configurable WIDTH parameter.",
+    "constraints": "Parameter: WIDTH=8. Inputs: clk, rst_n, d (serial in). Output: q[WIDTH-1:0].",
+    "expected_output": "Each clock, data shifts left (q[0] gets d; q[WIDTH-1] is oldest)",
+    "starter_code": "module shift_reg #(parameter WIDTH = 8) (\n  input  clk, rst_n, d,\n  output reg [WIDTH-1:0] q\n);\n  // Your solution here\n\nendmodule",
+    "solution_code": "module shift_reg #(parameter WIDTH = 8) (\n  input  clk, rst_n, d,\n  output reg [WIDTH-1:0] q\n);\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n) q <= {WIDTH{1'b0}};\n    else        q <= {q[WIDTH-2:0], d};\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Moore FSM: Sequence Detector (1011)",
+    "prompt": "Design a Moore FSM that outputs 1 when the input sequence '1011' is detected (overlapping).",
+    "constraints": "Inputs: clk, rst_n, in. Output: out (reg). States: S0, S1, S2, S3, S4.",
+    "expected_output": "out=1 only one cycle after detecting ...1011; sequence may overlap",
+    "starter_code": "module seq_det_1011(\n  input  clk, rst_n, in,\n  output reg out\n);\n  localparam S0=0, S1=1, S2=2, S3=3, S4=4;\n  reg [2:0] state, next;\n\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) state <= S0;\n    else        state <= next;\n\n  // Add next-state and output logic here\n\nendmodule",
+    "solution_code": "module seq_det_1011(\n  input  clk, rst_n, in,\n  output reg out\n);\n  localparam S0=0, S1=1, S2=2, S3=3, S4=4;\n  reg [2:0] state, next;\n\n  always @(posedge clk or negedge rst_n)\n    if (!rst_n) state <= S0;\n    else        state <= next;\n\n  always @(*) begin\n    next = S0; out = 0;\n    case (state)\n      S0: next = in ? S1 : S0;\n      S1: next = in ? S1 : S2;\n      S2: next = in ? S3 : S0;\n      S3: next = in ? S4 : S2;\n      S4: begin out = 1; next = in ? S1 : S2; end\n      default: next = S0;\n    endcase\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "verilog-hdl",
+    "title": "Synchronous FIFO",
+    "prompt": "Write a synchronous FIFO with DEPTH=8 and DATA_WIDTH=8. Include full and empty flags.",
+    "constraints": "Inputs: clk, rst_n, wr_en, rd_en, din. Outputs: dout, full, empty.",
+    "expected_output": "Write when wr_en and not full; read when rd_en and not empty; full/empty reflect state",
+    "starter_code": "module sync_fifo #(\n  parameter DEPTH = 8,\n  parameter DATA_W = 8\n)(\n  input              clk, rst_n,\n  input              wr_en, rd_en,\n  input  [DATA_W-1:0] din,\n  output reg [DATA_W-1:0] dout,\n  output             full, empty\n);\n  // Your solution here\n\nendmodule",
+    "solution_code": "module sync_fifo #(\n  parameter DEPTH = 8,\n  parameter DATA_W = 8\n)(\n  input              clk, rst_n,\n  input              wr_en, rd_en,\n  input  [DATA_W-1:0] din,\n  output reg [DATA_W-1:0] dout,\n  output             full, empty\n);\n  reg [DATA_W-1:0] mem [0:DEPTH-1];\n  reg [$clog2(DEPTH):0] wr_ptr, rd_ptr, count;\n\n  assign full  = (count == DEPTH);\n  assign empty = (count == 0);\n\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin\n      wr_ptr <= 0; rd_ptr <= 0; count <= 0;\n    end else begin\n      if (wr_en && !full)  begin mem[wr_ptr] <= din; wr_ptr <= wr_ptr + 1; end\n      if (rd_en && !empty) begin dout <= mem[rd_ptr]; rd_ptr <= rd_ptr + 1; end\n      case ({wr_en && !full, rd_en && !empty})\n        2'b10: count <= count + 1;\n        2'b01: count <= count - 1;\n        default: ;\n      endcase\n    end\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "title": "Parameterized Up-Counter (always_ff)",
+    "prompt": "Create a WIDTH-parameterized up-counter with synchronous clear using always_ff.",
+    "constraints": "Use logic type and always_ff. Inputs: clk, rst_n (async), clr (sync). Output: cnt[WIDTH-1:0].",
+    "expected_output": "cnt increments each clock; rst_n=0 async resets; clr=1 sync clears",
+    "starter_code": "module up_counter #(parameter int WIDTH = 8) (\n  input  logic       clk, rst_n, clr,\n  output logic [WIDTH-1:0] cnt\n);\n  // Use always_ff here\n\nendmodule",
+    "solution_code": "module up_counter #(parameter int WIDTH = 8) (\n  input  logic       clk, rst_n, clr,\n  output logic [WIDTH-1:0] cnt\n);\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) cnt <= '0;\n    else if (clr) cnt <= '0;\n    else          cnt <= cnt + 1'b1;\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "title": "4-to-2 Priority Encoder (always_comb)",
+    "prompt": "Implement a 4-to-2 priority encoder with valid flag using always_comb and unique casez.",
+    "constraints": "Input: req[3:0]. Outputs: enc[1:0], valid. Bit 3 has highest priority.",
+    "expected_output": "enc outputs highest priority asserted bit index; valid=0 when req=0",
+    "starter_code": "module prio_enc4 (\n  input  logic [3:0] req,\n  output logic [1:0] enc,\n  output logic       valid\n);\n  // Use always_comb with unique casez\n\nendmodule",
+    "solution_code": "module prio_enc4 (\n  input  logic [3:0] req,\n  output logic [1:0] enc,\n  output logic       valid\n);\n  always_comb begin\n    valid = 1'b1;\n    unique casez (req)\n      4'b1???: enc = 2'd3;\n      4'b01??: enc = 2'd2;\n      4'b001?: enc = 2'd1;\n      4'b0001: enc = 2'd0;\n      default: begin valid = 1'b0; enc = 2'd0; end\n    endcase\n  end\nendmodule"
+  },
+  {
+    "subject_slug": "systemverilog-rtl",
+    "title": "Round-Robin Arbiter",
+    "prompt": "Design a 4-input round-robin arbiter. Grant rotates among requestors to ensure fairness.",
+    "constraints": "Inputs: clk, rst_n, req[3:0]. Output: gnt[3:0] (one-hot). Use always_ff and always_comb.",
+    "expected_output": "Only one grant bit set per cycle; grant rotates among requestors in order",
+    "starter_code": "module rr_arbiter (\n  input  logic       clk, rst_n,\n  input  logic [3:0] req,\n  output logic [3:0] gnt\n);\n  logic [1:0] last_gnt;  // pointer to last granted requester\n  // Your solution here\n\nendmodule",
+    "solution_code": "module rr_arbiter (\n  input  logic       clk, rst_n,\n  input  logic [3:0] req,\n  output logic [3:0] gnt\n);\n  logic [1:0] ptr;\n  logic [3:0] gnt_comb;\n  int i;\n\n  always_comb begin\n    gnt_comb = 4'b0;\n    for (i = 0; i < 4; i++) begin\n      int idx;\n      idx = (ptr + i) % 4;\n      if (req[idx]) begin gnt_comb[idx] = 1'b1; break; end\n    end\n  end\n\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) ptr <= 2'd0;\n    else if (|gnt_comb)\n      ptr <= (ptr == 2'd3) ? 2'd0 : ptr + 1'b1;\n  end\n\n  assign gnt = gnt_comb;\nendmodule"
+  },
+  {
+    "subject_slug": "uvm",
+    "title": "UVM Transaction (uvm_sequence_item)",
+    "prompt": "Create a UVM transaction class for a simple memory bus: address, data, write flag. Include field macros and a constraint.",
+    "constraints": "Extend uvm_sequence_item. Use rand fields. Constraint: addr aligned to 4 bytes. Include `uvm_object_utils_begin macro block.",
+    "expected_output": "Transaction class with rand addr[31:0], data[31:0], write bit; addr%4==0 constraint",
+    "starter_code": "class mem_txn extends uvm_sequence_item;\n  `uvm_object_utils_begin(mem_txn)\n    // TODO: add field macros\n  `uvm_object_utils_end\n\n  // TODO: declare rand fields\n\n  // TODO: add constraint for 4-byte alignment\n\n  function new(string name = \"mem_txn\");\n    super.new(name);\n  endfunction\nendclass",
+    "solution_code": "class mem_txn extends uvm_sequence_item;\n  rand bit [31:0] addr;\n  rand bit [31:0] data;\n  rand bit        write;\n\n  constraint c_align { addr[1:0] == 2'b00; }  // 4-byte aligned\n\n  `uvm_object_utils_begin(mem_txn)\n    `uvm_field_int(addr,  UVM_ALL_ON)\n    `uvm_field_int(data,  UVM_ALL_ON)\n    `uvm_field_int(write, UVM_ALL_ON)\n  `uvm_object_utils_end\n\n  function new(string name = \"mem_txn\");\n    super.new(name);\n  endfunction\nendclass"
+  },
+  {
+    "subject_slug": "uvm",
+    "title": "UVM Sequence: Directed Write/Read",
+    "prompt": "Write a UVM sequence that sends 5 write transactions followed by 5 read transactions to the same addresses.",
+    "constraints": "Extend uvm_sequence #(mem_txn). Use start_item / finish_item pattern. Override body() task.",
+    "expected_output": "Sequence sends 5 writes (write=1) then 5 reads (write=0) to addresses 0,4,8,12,16",
+    "starter_code": "class directed_seq extends uvm_sequence #(mem_txn);\n  `uvm_object_utils(directed_seq)\n\n  function new(string name = \"directed_seq\");\n    super.new(name);\n  endfunction\n\n  task body();\n    // TODO: send 5 writes, then 5 reads\n  endtask\nendclass",
+    "solution_code": "class directed_seq extends uvm_sequence #(mem_txn);\n  `uvm_object_utils(directed_seq)\n\n  function new(string name = \"directed_seq\");\n    super.new(name);\n  endfunction\n\n  task body();\n    mem_txn txn;\n    // 5 writes\n    for (int i = 0; i < 5; i++) begin\n      txn = mem_txn::type_id::create($sformatf(\"wr%0d\", i));\n      start_item(txn);\n      assert(txn.randomize() with { write == 1; addr == i * 4; });\n      finish_item(txn);\n    end\n    // 5 reads\n    for (int i = 0; i < 5; i++) begin\n      txn = mem_txn::type_id::create($sformatf(\"rd%0d\", i));\n      start_item(txn);\n      assert(txn.randomize() with { write == 0; addr == i * 4; });\n      finish_item(txn);\n    end\n  endtask\nendclass"
+  },
+  {
+    "subject_slug": "uvm",
+    "title": "UVM Driver: Pin-Level APB Driver",
+    "prompt": "Implement a UVM driver for APB protocol that drives address, write data, and control signals from a mem_txn transaction.",
+    "constraints": "Extend uvm_driver #(mem_txn). Use a virtual apb_if. Override run_phase. Loop forever: get_next_item, drive_apb, item_done.",
+    "expected_output": "Driver drives PSEL, PENABLE, PADDR, PWDATA, PWRITE; waits for PREADY",
+    "starter_code": "class apb_driver extends uvm_driver #(mem_txn);\n  `uvm_component_utils(apb_driver)\n\n  virtual apb_if vif;\n\n  function new(string name, uvm_component parent);\n    super.new(name, parent);\n  endfunction\n\n  function void build_phase(uvm_phase phase);\n    super.build_phase(phase);\n    // Get vif from config_db\n  endfunction\n\n  task run_phase(uvm_phase phase);\n    forever begin\n      // Get transaction and drive APB\n    end\n  endtask\nendclass",
+    "solution_code": "class apb_driver extends uvm_driver #(mem_txn);\n  `uvm_component_utils(apb_driver)\n\n  virtual apb_if vif;\n\n  function new(string name, uvm_component parent);\n    super.new(name, parent);\n  endfunction\n\n  function void build_phase(uvm_phase phase);\n    super.build_phase(phase);\n    if (!uvm_config_db #(virtual apb_if)::get(this, \"\", \"vif\", vif))\n      `uvm_fatal(\"NOVIF\", \"APB virtual interface not found\")\n  endfunction\n\n  task run_phase(uvm_phase phase);\n    vif.PSEL    <= 0;\n    vif.PENABLE <= 0;\n    forever begin\n      seq_item_port.get_next_item(req);\n      // SETUP phase\n      @(posedge vif.PCLK);\n      vif.PSEL   <= 1;\n      vif.PADDR  <= req.addr;\n      vif.PWRITE <= req.write;\n      vif.PWDATA <= req.write ? req.data : 0;\n      // ACCESS phase\n      @(posedge vif.PCLK);\n      vif.PENABLE <= 1;\n      @(posedge vif.PCLK iff vif.PREADY);\n      vif.PSEL    <= 0;\n      vif.PENABLE <= 0;\n      seq_item_port.item_done();\n    end\n  endtask\nendclass"
+  }
+]

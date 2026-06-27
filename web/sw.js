@@ -1,5 +1,5 @@
 // VLSI Forge service worker — offline caching + installability
-const CACHE = "vlsi-forge-v13";
+const CACHE = "vlsi-forge-v15";
 const ASSETS = [
   "./",
   "./index.html",
